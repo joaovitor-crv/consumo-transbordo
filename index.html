@@ -119,7 +119,7 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
   <div class="foot"><b>Regras e observações</b>
     <ul>
       <li>Litros: abastecimento (postos 622xx e 222xx); toneladas: balança, espécie Trator - Transbordo, peso líquido em kg (coluna M); horas, motor ocioso e RPM: monit.</li>
-      <li>L/t = litros ÷ toneladas, só com transbordos que têm abastecimento e pesagem. Meta 1,00 L/t (mesma das colhedoras): verde até 1,00; cinza 1,01–1,15; amarelo 1,16–1,50; vermelho acima de 1,50.</li>
+      <li>L/t = litros ÷ toneladas, só com transbordos que têm abastecimento e pesagem. Meta 1,00 L/t; abaixo da meta é ruim: verde a partir de 1,00; cinza 0,85–0,99; amarelo 0,50–0,84; vermelho abaixo de 0,50.</li>
       <li>Motor ocioso = estado PARADA com motor ligado (monit). Cada parada é uma sequência contínua de leituras paradas com motor ligado; de cada parada são descontados 90 segundos (paradas de até 90 s não contam). Paradas = total de paradas com motor ligado no período. RPM 850 é falha do sistema e conta como motor desligado (fica fora de horas ligado, motor ocioso e faixas de RPM). Cada leitura vale o tempo até a próxima, no máximo 5 min. % ocioso = horas ociosas ÷ horas de motor ligado; meta 10%.</li>
       <li>Horas = motor ligado no monit; sem monit, horímetro do abastecimento.</li>
       <li>Turnos: A 07–15h, B 15–23h, C 23–07h.</li>
@@ -152,7 +152,7 @@ const kpis=[['bomba',f2(K.litros),'Litros Abast',''],['caminhao',f0(K.frotas),'T
 document.getElementById('kpis').innerHTML=kpis.map(([i,v,l,c])=>`<div class="kpi"><svg viewBox="0 0 30 30" aria-hidden="true">${IC[i]}</svg><div><span class="v ${c}">${v}</span><span class="l">${l}</span></div></div>`).join('');
 document.getElementById('periodo').textContent='PERÍODO '+D.periodo;
 
-const kc=v=>v==null?'':(v<=K.meta?'kgn':(v<=1.15?'kg':(v<=1.5?'ky':'kr')));
+const kc=v=>v==null?'':(v>=K.meta?'kgn':(v>=0.85?'kg':(v>=0.5?'ky':'kr')));
 const tb=document.getElementById('tab');
 D.tabela.forEach(g=>{const r=tb.insertRow();r.className='g';const c=r.insertCell();c.colSpan=7;c.textContent=g.grupo;
  g.linhas.forEach(x=>{const tr=tb.insertRow();const z=v=>v==null||v===0;
