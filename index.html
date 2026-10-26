@@ -15,6 +15,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font
 .pg{padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1500px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
 .top{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:stretch}
 .logo{background:var(--card);border-radius:8px;display:flex;align-items:center;justify-content:center;padding:6px 10px}
+.logo-img{display:block;height:48px;width:auto;max-width:100%}
 .logo-box{border:2px solid var(--navy);border-radius:6px;padding:4px 12px;text-align:center;line-height:1}
 .logo-box b{display:block;color:var(--navy);font-size:20px;letter-spacing:.02em;font-weight:800}
 .logo-box small{display:block;color:var(--navy);font-size:8px;font-style:italic;text-align:right;margin-top:2px}
@@ -70,7 +71,7 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 
 <div class="pg">
   <div class="top">
-    <div class="logo"><div class="logo-box"><b>CRV INDUSTRIAL</b><small>Açúcar Etanol e Energia</small></div></div>
+    <div class="logo"><img class="logo-img" src="logo-crv.png" alt="CRV Industrial — Açúcar, Etanol e Energia"></div>
     <div class="hdr">
       <div class="hdr-row"><h1>Acompanhamento consumo de combustível - transbordos</h1><span class="periodo" id="periodo"></span></div>
       <div class="kpis" id="kpis"></div>
