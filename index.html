@@ -238,4 +238,5 @@ linha('c-excdia',D.exc_dia,K.exc_pct,{w:1200,h:110,fmt:v=>NF(0)(v*100)+'%',lo:0,
 rosca('c-excturno',D.exc_turno);
 (D.notas||[]).forEach(t=>{const li=document.createElement('li');li.textContent=t;document.getElementById('notas').appendChild(li)});
 </script>
+<div class="assinatura-jv" style="text-align:center;font-size:12px;line-height:1.4;opacity:.6;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px))">Desenvolvido por João Vitor - CRV</div>
 </body></html>
