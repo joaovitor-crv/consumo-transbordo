@@ -11,7 +11,7 @@ Painel de consumo dos transbordos: L/h por modelo (meta do indicador), L/t, moto
 ## Regras
 - Frentes pelo indicador (F-I, F-II, F-III…); a frente de cada trator no monit segue a do indicador.
 - Meta de L/h por modelo, do indicador (6190J e BH 224: 8,00; 7230J/7M230: 9,50). Frente e geral: média das metas ponderada pelas horas.
-- Motor ocioso = PARADA com motor ligado (Sim ou RPM ≥ 700); cada leitura vale até a próxima (máx. 10 min); 90 s descontados de cada parada. Meta 10%.
+- Motor ocioso = todo o tempo em PARADA com motor ligado (Sim ou RPM ≥ 700), sem desconto; basculando não conta. Cada leitura vale até a próxima (máx. 10 min). Meta 10%.
 - RPM: transbordo pode rodar até 1.650. Faixas: até 900 (lenta), 901–1.650, 1.651–1.800, 1.801–2.000, acima de 2.000. Excesso = acima de 1.650.
 - Rankings de operador e de excesso de RPM: só com pelo menos 5 h de motor ligado.
 - Turnos: A 07–15h, B 15–23h, C 23–07h.
