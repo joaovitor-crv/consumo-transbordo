@@ -21,7 +21,7 @@ from datetime import datetime, timedelta
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 CAP = 600          # cada leitura do monit vale no máximo 10 min
-DESCONTO = 0       # transbordo: todo tempo parado com motor ligado é ocioso (basculando é outro estado e não conta)
+DESCONTO = 90      # segundos descontados de cada parada com motor ligado
 META_LT, META_OC = 1.0, 0.10   # a meta de L/h vem do PDF, por modelo
 MIN_H = 5 * 3600   # mínimo de motor ligado para entrar nos rankings (operador e RPM)
 ROMANO = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7, "VIII": 8, "IX": 9, "X": 10}
@@ -223,7 +223,9 @@ def main():
             + (f" Sem telemetria nesse período: {', '.join(sem)} ({'aparece' if len(sem) == 1 else 'aparecem'} na tabela só com os dados de consumo)." if sem else ""),
             *([f"Atenção: segundo o indicador, o abastecimento é lançado à mão e está integrado só até {totais['aviso_ate']}; o diesel da semana depois dessa data pode estar incompleto."] if totais.get("aviso_ate") else []),
             *([f"No monit nas frentes {nf}, mas sem lançamento nessas frentes no indicador (não entram): {', '.join(fora_fr)}."] if fora_fr else []),
-            f"Motor ocioso: {br(t['paradas'], 0)} paradas com motor ligado na semana, somando {br(t['oc'], 1)} h.",
+            f"Motor ocioso descontando 90 s de cada parada: {br(t['paradas'], 0)} paradas com motor ligado; "
+            f"{br(t['paradas'] - t['paradas_90'], 0)} duraram até 90 s e não contam. Sem o desconto seriam {br(t['oc_bruto'], 1)} h; "
+            f"com o desconto, {br(t['oc'], 1)} h.",
         ])
     html = open(os.path.join(AQUI, "modelo.html"), encoding="utf-8").read()
     html = html.replace("__DADOS__", json.dumps(D, ensure_ascii=False)).replace("__FRENTES__", f"Frentes {nf}")

@@ -132,7 +132,7 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
     <ul>
       <li>Litros, horas, toneladas, L/h e L/t: coluna SEMANA do Indicador de Consumo de Combustível — Tratores Transbordo (abastecimento e pesagem do CHB). Motor ocioso, paradas, RPM, motivos e turnos: monit.</li>
       <li>__FRENTES__. L/t da frente = litros da frente ÷ toneladas da frente, como no indicador.</li>
-      <li>Motor ocioso = todo o tempo em PARADA com motor ligado (monit), sem desconto; basculando não conta como ocioso. Cada leitura vale até a próxima, com limite de 10 min. Paradas = total de paradas com motor ligado no período. % ocioso = horas ociosas ÷ horas de motor ligado; meta 10%.</li>
+      <li>Motor ocioso = estado PARADA com motor ligado (monit). Cada parada é uma sequência contínua de leituras paradas com motor ligado; de cada parada são descontados 90 segundos (paradas de até 90 s não contam); basculando não conta como ocioso. Paradas = total de paradas com motor ligado no período. % ocioso = horas ociosas ÷ horas de motor ligado; meta 10%.</li>
       <li>Meta de L/h por modelo, como no indicador (ex.: 6190J e BH 224 8,00; 7230J/7M230 9,50). Na frente e no geral, a meta é a média das metas ponderada pelas horas. Verde até a meta, vermelho acima. Motor ocioso e % ocioso são calculados pelo monit.</li>
       <li>Turnos: A 07–15h, B 15–23h, C 23–07h.</li>
       <li>Faixa de RPM = % do tempo de motor ligado em cada faixa de rotação (monit). Os transbordos podem rodar até 1.650 RPM: acima disso é excesso, dividido em 1.651–1.800, 1.801–2.000 e acima de 2.000.</li>
