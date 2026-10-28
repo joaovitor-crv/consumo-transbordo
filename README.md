@@ -2,7 +2,7 @@
 
 Painel de consumo dos transbordos: L/h por modelo (meta do indicador), L/t, motor ocioso, paradas longas, faixa de RPM, excesso de RPM e operadores.
 
-**Período atual:** 19/10/2026 a 25/10/2026 (frentes 1, 2 e 3)
+**Período atual:** 19/10/2026 a 25/10/2026 (frentes 1, 2, 3, 5 e 6)
 
 ## Bases
 - **Indicador Consumo de Combustível — Tratores Transbordo (PDF)**: coluna SEMANA (horas, diesel, L/h, meta por modelo, toneladas, L/t).
@@ -19,7 +19,7 @@ Painel de consumo dos transbordos: L/h por modelo (meta do indicador), L/t, moto
 
 ## Como gerar
 ```
-python gerar/gerar_relatorio.py --pdf INDICADOR_TRANSBORDOS.pdf --monit MONIT.csv --frentes 1,2,3
+python gerar/gerar_relatorio.py --pdf INDICADOR_TRANSBORDOS.pdf --monit MONIT.csv --frentes 1,2,3,5,6
 ```
 Precisa de Python 3 e `pdftotext` (poppler-utils). Visual em `gerar/modelo.html` (dados em `__DADOS__`).
 

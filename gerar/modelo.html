@@ -59,6 +59,18 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .note{font-size:11px;color:var(--muted);margin:6px 0 0}
 .foot{font-size:11px;color:var(--muted);background:var(--card);border-radius:8px;padding:8px 12px}
 .foot ul{margin:4px 0 0;padding-left:18px;display:grid;gap:2px}
+.dica{text-align:center;margin:0 0 4px;color:var(--navy);font-weight:600}
+.dlg{position:fixed;inset:0;background:rgba(20,30,60,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.dlg-c{background:#fff;border-radius:12px;max-width:760px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.dlg-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;background:var(--navy);color:#fff;padding:10px 14px;position:sticky;top:0}
+.dlg-h b{display:block;font-size:14px}.dlg-h small{font-size:12px;opacity:.85}
+.dlg-h button{background:transparent;border:1px solid rgba(255,255,255,.6);color:#fff;border-radius:6px;font-size:14px;padding:2px 10px;cursor:pointer}
+.dt{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.dt th{text-align:right;padding:8px 8px 6px;border-bottom:1px solid #8a93a6;white-space:nowrap}
+.dt td{text-align:right;padding:5px 8px;border-bottom:1px solid #eef0f4;white-space:nowrap}
+.dt th:first-child,.dt td:first-child{text-align:left}
+.dt td.kr{color:var(--red);font-weight:700}.dt td.kgn{color:var(--green);font-weight:700}
+.mb{display:block;height:5px;background:#eef0f4;border-radius:3px;margin-top:2px;min-width:70px}.mb i{display:block;height:5px;border-radius:3px}
 .tip{position:absolute;pointer-events:none;background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.12);padding:4px 8px;font-size:12px;white-space:nowrap;z-index:5}
 @media (max-width:1250px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.grid .col:last-child{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
 @media (max-width:820px){.top{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.grid,.grid .col:last-child{grid-template-columns:minmax(0,1fr);display:grid}.split{grid-template-columns:minmax(0,1fr)}}
@@ -91,7 +103,7 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
     <div class="col">
       <section class="card"><h2>Registros de motor ocioso</h2>
         <div class="cb">
-          <h3 class="sub" style="margin-top:2px">% de motor ocioso por transbordo (meta 10%)</h3>
+          <h3 class="sub" style="margin-top:2px">% de motor ocioso por transbordo (meta 10%)</h3><p class="note dica">Clique num transbordo para ver os operadores.</p>
           <div class="chart" id="c-ocfx"></div>
           <div class="split">
             <div><h3 class="sub" style="margin-top:0">Horas ociosas (top 10)</h3><div class="chart" id="c-octop"></div></div>
@@ -109,6 +121,10 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
       <section class="card"><h3>Litros por tonelada por frente</h3>
         <div class="cb"><div class="chart" id="c-lt"></div></div>
       </section>
+      <section class="card"><h3>Top 10 operadores em excesso de RPM (acima de 1.650)</h3>
+        <div class="cb"><div class="chart" id="c-rpmop"></div>
+          <p class="note">% do tempo de motor ligado acima de 1.650 RPM, pelo operador registrado no monit. Entram operadores com pelo menos 20 h de motor ligado na semana.</p></div>
+      </section>
     </div>
 
     <div class="col">
@@ -119,11 +135,15 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
           <div class="leg" id="leg-rpm"></div>
           <h3 class="sub">Top 10 transbordos em excesso de RPM (acima de 1.650)</h3>
           <div class="chart" id="c-rpmtop"></div>
-          <p class="note">% do tempo de motor ligado acima de 1.650 RPM (limite do transbordo). Entram transbordos com pelo menos 20 h de motor ligado na semana.</p>
+          <p class="note">% do tempo de motor ligado acima de 1.650 RPM (limite do transbordo). Entram transbordos com pelo menos 20 h de motor ligado na semana. <b>Clique num transbordo para ver os operadores.</b></p>
         </div>
       </section>
       <section class="card"><h2>Motor ocioso por operador</h2>
         <div class="cb"><div class="chart" id="c-op"></div><p class="note">Os 10 operadores com maior % de motor ocioso, entre os que tiveram pelo menos 5 h de motor ligado na semana. Vermelho: acima da meta de 10%.</p></div>
+      </section>
+      <section class="card" id="card-sem" hidden><h3>Com abastecimento, sem dados no Solinftec <span id="sem-n"></span></h3>
+        <div class="cb"><div class="to-wrap"><table class="to"><thead><tr><th>Frota</th><th>Frente</th><th>Litros</th><th>Horas</th><th>L/h</th></tr></thead><tbody id="t-sem"></tbody></table></div>
+          <p class="note">Aparecem no relatório de abastecimento, mas sem telemetria (Solinftec/monit) na semana: ficam fora de motor ocioso, RPM e operadores.</p></div>
       </section>
     </div>
   </div>
@@ -139,6 +159,14 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
       <li>Paradas longas: paradas com motor ligado que duraram mais de 10 min e mais de 30 min; "Horas" soma a duração total dessas paradas acima de 10 min.</li>
       <li>Motor ocioso por operador: % ocioso calculado com o operador registrado no monit em cada leitura; entram os operadores com pelo menos 5 h de motor ligado na semana. "Sem Operador" = leituras sem operador logado.</li>
     </ul><ul id="notas"></ul>
+  </div>
+</div>
+
+<div class="dlg" id="dlg" hidden role="dialog" aria-modal="true" aria-labelledby="dlg-t">
+  <div class="dlg-c">
+    <div class="dlg-h"><div><b id="dlg-t"></b><small id="dlg-s"></small></div><button id="dlg-x" type="button" aria-label="Fechar">✕</button></div>
+    <div style="padding:6px 10px 12px"><div style="overflow-x:auto"><table class="dt"><thead><tr><th>Operador</th><th>Motor ligado (h)</th><th>Ocioso (h)</th><th>% ocioso</th><th>Acima 1.650 (h)</th><th>% acima 1.650</th></tr></thead><tbody id="dlg-b"></tbody></table></div>
+    <p class="note" style="padding:0 2px">Operador registrado no monit nesse transbordo (pelo menos 15 min de motor ligado). Meta de ocioso: 10%.</p></div>
   </div>
 </div>
 
@@ -198,7 +226,8 @@ function hbars(id,rows,opt){const box=document.getElementById(id);const W=opt.w|
  rows.forEach((r,i)=>{const y=i*rh+3;const w=Math.max(2,bwMax*r.v/max);
   el('text',{x:lw-8,y:y+rh/2+4,'text-anchor':'end','font-size':opt.fs||12},s,r.l);
   const rc=el('rect',{x:lw,y:y+4,width:w,height:rh-9,fill:opt.color?opt.color(r,i):'#22378c'},s);hover(rc,box,`${r.l}: ${opt.fmt(r.v)}`);
-  el('text',{x:lw+w+6,y:y+rh/2+4,'font-size':opt.fs||12,'font-weight':opt.bold?700:400},s,opt.fmt(r.v));});}
+  el('text',{x:lw+w+6,y:y+rh/2+4,'font-size':opt.fs||12,'font-weight':opt.bold?700:400},s,opt.fmt(r.v));
+  if(opt.click)clicavel(s,box,0,y,W,rh,r,opt.click,`${r.l}: ${opt.fmt(r.v)}`);});}
 
 /* linha com meta */
 function linha(id,rows,meta,opt){const box=document.getElementById(id);const W=opt.w||560,H=opt.h||120,l=30,r=opt.r||40,top=24,bot=26;
@@ -229,12 +258,31 @@ function meta_bars(id,rows,o){const box=document.getElementById(id);const W=o.w,
  rows.forEach((r,i)=>{const y=i*rh+4;const w=Math.max(2,bw*r.v/max);
   el('text',{x:lw-8,y:y+rh/2+4,'text-anchor':'end','font-size':o.fs||12},s,r.l);
   const rc=el('rect',{x:lw,y:y+3,width:w,height:rh-7,fill:r.v>D.meta_oc?'#d64550':'#2e7d32'},s);hover(rc,box,r.t||`${r.l}: ${pc(r.v,1)}`);
-  el('text',{x:lw+w+6,y:y+rh/2+4,'font-size':o.fs||12,'font-weight':700},s,pc(r.v,1));});
+  el('text',{x:lw+w+6,y:y+rh/2+4,'font-size':o.fs||12,'font-weight':700},s,pc(r.v,1));
+  if(o.click)clicavel(s,box,0,y,W,rh,r,o.click,`${r.l}: ${pc(r.v,1)}`);});
  el('line',{x1:xm,x2:xm,y1:0,y2:rows.length*rh+6,stroke:'#22378c','stroke-width':2,'stroke-dasharray':'5 4'},s);
  el('text',{x:xm,y:rows.length*rh+18,'text-anchor':'middle','font-size':11,'font-weight':700,fill:'#22378c'},s,'meta 10%');}
+/* clique no transbordo: operadores */
+function clicavel(s,box,x,y,w,h,r,fn,txt){const a=el('rect',{x,y,width:w,height:h,fill:'transparent',style:'cursor:pointer'},s);
+ a.addEventListener('click',()=>fn(r.l));const T=tip(box);a.addEventListener('mousemove',e=>T(e,`${txt} · clique para ver os operadores`));a.addEventListener('mouseleave',()=>T());}
+function detalhe(eq,modo){const L=(D.det||{})[eq]||[];const dlg=document.getElementById('dlg');
+ const rows=L.map(r=>({...r,poc:r.lig?r.oc/r.lig:0,px:r.lig?r.x/r.lig:0}));rows.sort((a,b)=>modo==='rpm'?b.px-a.px:b.poc-a.poc);
+ const nm=s=>{const w=s.split(' ');return w.length>1?w[0]+' '+w[w.length-1]:w[0]};
+ const barra=(v,max,cor)=>`<span class="mb"><i style="width:${Math.max(2,v/max*100)}%;background:${cor}"></i></span>`;
+ const mOc=Math.max(...rows.map(r=>r.poc),D.meta_oc),mX=Math.max(...rows.map(r=>r.px),.01);
+ document.getElementById('dlg-t').textContent=`Transbordo ${eq} — operadores`;
+ document.getElementById('dlg-s').textContent=modo==='rpm'?'Ordenado por % do tempo acima de 1.650 RPM':'Ordenado por % de motor ocioso';
+ document.getElementById('dlg-b').innerHTML=rows.length?rows.map(r=>`<tr><td title="${r.op}">${nm(r.op)}</td><td>${f1(r.lig)}</td>
+   <td>${f1(r.oc)}</td><td class="${r.poc>D.meta_oc?'kr':'kgn'}">${pc(r.poc,1)}${barra(r.poc,mOc,r.poc>D.meta_oc?'#d64550':'#2e7d32')}</td>
+   <td>${f1(r.x)}</td><td class="${r.px>0?'kr':''}">${pc(r.px,1)}${barra(r.px,mX,'#d64550')}</td></tr>`).join(''):'<tr><td colspan="6">Sem operadores registrados no monit.</td></tr>';
+ dlg.hidden=false;document.getElementById('dlg-x').focus();}
+function fecha(){document.getElementById('dlg').hidden=true}
+document.getElementById('dlg').addEventListener('click',e=>{if(e.target.id==='dlg')fecha()});
+document.getElementById('dlg-x').addEventListener('click',fecha);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')fecha()});
 /* motor ocioso */
-meta_bars('c-ocfx',D.oc_frota,{w:600,lw:52,vw:52,rh:20});
-hbars('c-octop',D.oc_top,{w:230,vw:46,fmt:f1,lw:52});
+meta_bars('c-ocfx',D.oc_frota,{w:600,lw:52,vw:52,rh:20,click:eq=>detalhe(eq,'oc')});
+hbars('c-octop',D.oc_top,{w:230,vw:46,fmt:f1,lw:52,click:eq=>detalhe(eq,'oc')});
 const to=document.getElementById('t-oc');D.longas.forEach(r=>{const tr=to.insertRow();[r.frota,f0(r.p10),f0(r.p30),f1(r.h10)].forEach(t=>{tr.insertCell().textContent=t})});
 meta_bars('c-op',D.oc_op.map(r=>({l:(w=>w.length>1?w[0]+' '+w[w.length-1]:w[0])(r.l.split(' ')),v:r.v,t:`${r.l} (${r.fr}): ${f1(r.oc)} h ociosas de ${f1(r.lig)} h ligado`})),{w:400,lw:150,vw:48,rh:24,fs:11});
 linha('c-ocdia',D.oc_dia,D.meta_oc,{w:380,h:120,fmt:v=>NF(0)(v*100)+'%',lo:0,hi:1.25,area:true});
@@ -256,8 +304,12 @@ hbars('c-rpm',D.rpm,{w:400,vw:62,lw:112,rh:29,fmt:v=>pc(v),bold:true,color:(r,i)
    if(w>30)el('text',{x:x+w/2,y:y+(rh-10)/2+4,'text-anchor':'middle','font-size':11,'font-weight':700,style:'fill:'+(k===2||k===3?'#1d2433':'#fff')},s,NF(0)(v*100)+'%');x+=w}});
  document.getElementById('leg-rpm').innerHTML=nomes.map((n,k)=>`<span><i style="background:${cores[k]}"></i>${n}</span>`).join('');
  document.getElementById('leg-rpm').style.flexWrap='wrap';
- hbars('c-rpmtop',D.rpm_top.map(r=>({l:r.l,v:r.v,h:r.h})),{w:400,vw:62,lw:56,rh:22,fmt:v=>pc(v,1),bold:true,color:()=>'#d64550'});
+ hbars('c-rpmop',(D.rpm_op||[]).map(r=>({l:(w=>w.length>1?w[0]+' '+w[w.length-1]:w[0])(r.l.split(' ')),v:r.v})),{w:600,vw:62,lw:170,rh:24,fmt:v=>pc(v,1),bold:true,fs:12,color:()=>'#d64550'});
+ hbars('c-rpmtop',D.rpm_top.map(r=>({l:r.l,v:r.v,h:r.h})),{w:400,vw:62,lw:56,rh:22,fmt:v=>pc(v,1),bold:true,color:()=>'#d64550',click:eq=>detalhe(eq,'rpm')});
 })();
+/* frotas sem Solinftec */
+if((D.sem_monit||[]).length){document.getElementById('card-sem').hidden=false;document.getElementById('sem-n').textContent=D.sem_monit.length+' frotas';
+ const ts=document.getElementById('t-sem');D.sem_monit.forEach(r=>{const tr=ts.insertRow();[String(r.frota),'Frente '+r.frente,f0(r.litros||0),f1(r.horas||0),r.lh==null?'-':f2(r.lh)].forEach(t=>{tr.insertCell().textContent=t})})}
 /* motivos e turno */
 hbars('c-motivo',D.motivo.map(r=>({l:r.l.replace('Abastecimento De Combustivel - Campo','Abastecimento Campo').replace('Aguardando Manobra Transbordo','Aguard. Manobra Transb.').replace('Manutencao','Manutenção'),v:r.v})),{w:400,vw:46,lw:178,fmt:f1,bold:true,fs:11,color:r=>r.l==='Aguardando Transbordo'||r.l==='Sem Apontamento'?'#d64550':'#22378c'});
 rosca('c-turno',D.oc_turno);
