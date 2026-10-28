@@ -1,17 +1,15 @@
-<!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Consumo Combustível Transbordos CRV</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
-/* Layout: réplica do painel Power BI das colhedoras — faixa de KPIs no topo, 3 colunas (tabela | ocioso+L/t+consumo | RPM+motivos+toneladas) */
+/* Layout: réplica do painel Power BI — faixa de KPIs no topo, 3 colunas (tabela | ocioso+km/L+consumo | RPM+excessos) */
 :root{
   --bg:#eef0f4; --card:#ffffff; --line:#d9dde6; --ink:#1d2433; --muted:#5b6475;
   --navy:#22378c; --navy-2:#2a44a8; --green:#2e7d32; --red:#d64550; --yellow:#d9b51f; --gray:#6b6b6b;
   --ton:#e8edfb; --font:"Segoe UI","Segoe UI Web",Tahoma,Arial,sans-serif;
   color-scheme:light;
 }
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px}
+body{background:var(--bg);color:var(--ink);font-family:var(--font)}
 .pg{padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1500px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
 .top{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:stretch}
 .logo{background:var(--card);border-radius:8px;display:flex;align-items:center;justify-content:center;padding:6px 10px}
@@ -24,11 +22,6 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font
 .hdr h1{margin:0;color:var(--navy);font-size:13px;font-weight:700;letter-spacing:.01em;text-transform:uppercase}
 .periodo{background:#111;color:#fff;font-weight:700;font-style:italic;font-size:12px;padding:3px 16px;border-radius:4px;white-space:nowrap}
 .kpis{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
-.exc{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.8fr);gap:14px;align-items:start}
-.exc h4{margin:0 0 6px;color:var(--navy);font-size:12px;font-weight:700;text-transform:uppercase;text-align:center}
-.badge{display:inline-block;background:#fdeaea;color:var(--red);font-weight:700;border-radius:4px;padding:1px 6px;margin-left:6px;font-size:11px}
-@media (max-width:1250px){.exc{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
-@media (max-width:820px){.exc{grid-template-columns:minmax(0,1fr)}}
 .kpi{background:var(--card);border-radius:8px;display:flex;align-items:center;gap:8px;padding:6px 8px;min-width:0;box-shadow:0 1px 2px rgba(20,30,60,.06)}
 .kpi svg{flex:none;width:30px;height:30px}
 .kpi div{display:flex;flex-direction:column;align-items:center;flex:1;min-width:0;text-align:center}
@@ -49,8 +42,9 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .tv td:first-child{text-align:left;padding-left:14px;border-right:1px solid var(--navy)}
 .tv td.i{font-style:italic}
 .tv td.ton{background:var(--ton)}
+.tv tr.t td{font-weight:700;border-top:1px solid #8a93a6}
 .tv tr.g td{font-weight:700;text-align:left;padding:8px 6px 2px;border-right:none}
-.tv td.kg{color:var(--muted)} .tv td.ky{color:var(--yellow)} .tv td.kr{color:var(--red)} .tv td.kgn{color:var(--green)}
+.tv td.lh{font-weight:700} .tv td.meta{color:var(--green)} .tv td.kg{color:var(--muted)} .tv td.ky{color:var(--yellow)} .tv td.kr{color:var(--red)} .tv td.kgn{color:var(--green)}
 .chart{width:100%;position:relative}
 .chart svg{display:block;width:100%;height:auto;overflow:visible}
 .chart text{font-family:var(--font);fill:var(--ink)}
@@ -62,12 +56,13 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .leg{display:flex;justify-content:center;gap:14px;font-size:12px;color:var(--ink);margin:4px 0}
 .leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
 .sub{margin:10px 0 0;color:var(--navy);font-size:12px;font-weight:700;text-transform:uppercase;text-align:center}
+.note{font-size:11px;color:var(--muted);margin:6px 0 0}
 .foot{font-size:11px;color:var(--muted);background:var(--card);border-radius:8px;padding:8px 12px}
 .foot ul{margin:4px 0 0;padding-left:18px;display:grid;gap:2px}
 .tip{position:absolute;pointer-events:none;background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.12);padding:4px 8px;font-size:12px;white-space:nowrap;z-index:5}
 @media (max-width:1250px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.grid .col:last-child{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
 @media (max-width:820px){.top{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.grid,.grid .col:last-child{grid-template-columns:minmax(0,1fr);display:grid}.split{grid-template-columns:minmax(0,1fr)}}
-</style></head><body>
+</style>
 
 <div class="pg">
   <div class="top">
@@ -81,35 +76,7 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
   <div class="grid">
     <div class="col">
       <section class="card"><h2>Acompanhamento por transbordo</h2>
-        <div class="tw"><table class="tv"><thead><tr><th>Frotas</th><th>Litros</th><th>Horas</th><th>Toneladas</th><th>L/t</th><th>% Ocioso</th><th>Paradas</th><th>RPM &gt; 1.700 (h)</th></tr></thead><tbody id="tab"></tbody></table></div>
-      </section>
-    </div>
-
-    <div class="col">
-      <section class="card"><h2>Registros de motor ocioso</h2>
-        <div class="cb">
-          <div class="chart" id="c-ocfx"></div>
-          <div class="split">
-            <div class="chart" id="c-octop"></div>
-            <div>
-              <div class="to-wrap"><table class="to"><thead><tr><th>Frota</th><th>Data</th><th>Ligado (h)</th><th>Ocioso (h)</th><th>% Ocioso</th></tr></thead><tbody id="t-oc"></tbody></table></div>
-              <div class="leg"><span><i style="background:var(--navy)"></i>Motor Ocioso</span><span><i style="background:var(--green)"></i>Meta</span></div>
-              <div class="chart" id="c-ocdia"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="card"><h3>Evolução da média de consumo (litros por tonelada)</h3>
-        <div class="cb"><div class="leg"><span><i style="background:var(--navy)"></i>Média</span><span><i style="background:var(--green)"></i>Meta</span></div><div class="chart" id="c-lt"></div></div>
-      </section>
-      <section class="card"><h3>Consumo diário (litros) <span id="lit-media"></span></h3>
-        <div class="cb"><div class="chart" id="c-lit"></div></div>
-      </section>
-    </div>
-
-    <div class="col">
-      <section class="card"><h3>Faixa de RPM do motor</h3>
-        <div class="cb"><div class="chart" id="c-rpm"></div></div>
+        <div class="tw"><table class="tv"><thead><tr><th>Frotas</th><th>Litros</th><th>Horas</th><th>L/h</th><th>Meta L/h</th><th>Toneladas</th><th>L/t</th><th>% Ocioso</th><th>Paradas</th></tr></thead><tbody id="tab"></tbody></table></div>
       </section>
       <section class="card"><h2>Motor ocioso por motivo (horas)</h2>
         <div class="cb">
@@ -120,35 +87,63 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
         </div>
       </section>
     </div>
-  </div>
 
-  <section class="card"><h2>Excesso de RPM — acima de 1.700 (limite do trator)</h2>
-    <div class="cb exc">
-      <div><h4>Tempo por faixa (h)</h4><div class="chart" id="c-excfx"></div><div class="leg" id="exc-ev"></div></div>
-      <div><h4>Top 10 transbordos (h acima de 1.700)</h4><div class="chart" id="c-exctop"></div></div>
-      <div><h4>Em que estado acontece (h)</h4><div class="chart" id="c-excest"></div></div>
-      <div><h4>Excesso por turno</h4><div class="chart" id="c-excturno" style="max-width:240px;margin:0 auto"></div>
-        <div class="leg"><b>Turno:</b><span><i style="background:var(--red)"></i>A</span><span><i style="background:var(--yellow)"></i>B</span><span><i style="background:var(--gray)"></i>C</span></div></div>
+    <div class="col">
+      <section class="card"><h2>Registros de motor ocioso</h2>
+        <div class="cb">
+          <h3 class="sub" style="margin-top:2px">% de motor ocioso por transbordo (meta 10%)</h3>
+          <div class="chart" id="c-ocfx"></div>
+          <div class="split">
+            <div><h3 class="sub" style="margin-top:0">Horas ociosas (top 10)</h3><div class="chart" id="c-octop"></div></div>
+            <div>
+              <div class="to-wrap"><h3 class="sub" style="margin-top:0">Paradas longas com motor ligado</h3><table class="to"><thead><tr><th>Frota</th><th>&gt; 10 min</th><th>&gt; 30 min</th><th>Horas</th></tr></thead><tbody id="t-oc"></tbody></table></div>
+              <div class="leg"><span><i style="background:var(--navy)"></i>Motor Ocioso</span><span><i style="background:var(--green)"></i>Meta</span></div>
+              <div class="chart" id="c-ocdia"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="card"><h3>Litros por hora por frente</h3>
+        <div class="cb"><div class="leg"><span><i style="background:var(--green)"></i>Dentro da meta</span><span><i style="background:var(--red)"></i>Acima da meta</span></div><div class="chart" id="c-lh"></div></div>
+      </section>
+      <section class="card"><h3>Litros por tonelada por frente</h3>
+        <div class="cb"><div class="chart" id="c-lt"></div></div>
+      </section>
     </div>
-    <div class="cb" style="padding-top:0"><h4 style="margin:0;color:var(--navy);font-size:12px;text-transform:uppercase;text-align:center">% do tempo de motor ligado acima de 1.700 por dia</h4>
-      <div class="leg"><span><i style="background:var(--navy)"></i>% acima de 1.700</span><span><i style="background:var(--green)"></i>Média do período</span></div>
-      <div class="chart" id="c-excdia"></div></div>
-  </section>
+
+    <div class="col">
+      <section class="card"><h3>Faixa de RPM do motor</h3>
+        <div class="cb"><div class="chart" id="c-rpm"></div>
+          <h3 class="sub">Faixa de RPM por frente</h3>
+          <div class="chart" id="c-rpmfr"></div>
+          <div class="leg" id="leg-rpm"></div>
+          <h3 class="sub">Top 10 transbordos em excesso de RPM (acima de 1.650)</h3>
+          <div class="chart" id="c-rpmtop"></div>
+          <p class="note">% do tempo de motor ligado acima de 1.650 RPM (limite do transbordo). Entram transbordos com pelo menos 5 h de motor ligado na semana.</p>
+        </div>
+      </section>
+      <section class="card"><h2>Motor ocioso por operador</h2>
+        <div class="cb"><div class="chart" id="c-op"></div><p class="note">Os 10 operadores com maior % de motor ocioso, entre os que tiveram pelo menos 5 h de motor ligado na semana. Vermelho: acima da meta de 10%.</p></div>
+      </section>
+    </div>
+  </div>
 
   <div class="foot"><b>Regras e observações</b>
     <ul>
-      <li>Litros: abastecimento (postos 622xx e 222xx); toneladas: balança, espécie Trator - Transbordo, peso líquido em kg (coluna M); horas, motor ocioso e RPM: monit.</li>
-      <li>L/t = litros ÷ toneladas, só com transbordos que têm abastecimento e pesagem. Meta 1,00 L/t; abaixo da meta é ruim: verde a partir de 1,00; cinza 0,85–0,99; amarelo 0,50–0,84; vermelho abaixo de 0,50.</li>
-      <li>Motor ocioso = transbordo parado (velocidade 0) com motor ligado, em qualquer estado do monit menos basculando — inclui a espera pela colhedora e pelo caminhão. Cada parada é uma sequência contínua dessas leituras; de cada parada são descontados 90 segundos (paradas de até 90 s não contam). Paradas = total de paradas com motor ligado no período. RPM 850 é falha do sistema e conta como motor desligado (fica fora de horas ligado, motor ocioso e faixas de RPM). Cada leitura vale o tempo até a próxima, no máximo 5 min. % ocioso = horas ociosas ÷ horas de motor ligado; meta 10%.</li>
-      <li>Horas = motor ligado no monit; sem monit, horímetro do abastecimento.</li>
-      <li>Excesso de RPM: leituras com motor ligado acima de 1.700 RPM (limite do trator), sem tolerância de tempo. Faixas: 1.701–1.900, 1.901–2.100 e acima de 2.100. Evento = sequência contínua de leituras acima do limite; a faixa do evento é a do pico. Na tabela, em vermelho quem passa mais de 10% do tempo ligado acima de 1.700.</li>
+      <li>Litros, horas, toneladas, L/h e L/t: coluna SEMANA do Indicador de Consumo de Combustível — Tratores Transbordo (abastecimento e pesagem do CHB). Motor ocioso, paradas, RPM, motivos e turnos: monit.</li>
+      <li>Frentes 1, 2 e 3. L/t da frente = litros da frente ÷ toneladas da frente, como no indicador.</li>
+      <li>Motor ocioso = estado PARADA com motor ligado (monit). Cada parada é uma sequência contínua de leituras paradas com motor ligado; de cada parada são descontados 90 segundos (paradas de até 90 s não contam). Paradas = total de paradas com motor ligado no período. % ocioso = horas ociosas ÷ horas de motor ligado; meta 10%.</li>
+      <li>Meta de L/h por modelo, como no indicador (ex.: 6190J e BH 224 8,00; 7230J/7M230 9,50). Na frente e no geral, a meta é a média das metas ponderada pelas horas. Verde até a meta, vermelho acima. Motor ocioso e % ocioso são calculados pelo monit.</li>
       <li>Turnos: A 07–15h, B 15–23h, C 23–07h.</li>
+      <li>Faixa de RPM = % do tempo de motor ligado em cada faixa de rotação (monit). Os transbordos podem rodar até 1.650 RPM: acima disso é excesso, dividido em 1.651–1.800, 1.801–2.000 e acima de 2.000.</li>
+      <li>Paradas longas: paradas com motor ligado que duraram mais de 10 min e mais de 30 min; "Horas" soma a duração total dessas paradas acima de 10 min.</li>
+      <li>Motor ocioso por operador: % ocioso calculado com o operador registrado no monit em cada leitura; entram os operadores com pelo menos 5 h de motor ligado na semana. "Sem Operador" = leituras sem operador logado.</li>
     </ul><ul id="notas"></ul>
   </div>
 </div>
 
 <script>
-const D={"periodo": "12/10/2026 - 22/10/2026", "K": {"litros": 40265.88, "frotas": 30, "ton": 76745.31799999998, "lt": 0.5246688794748365, "meta": 1.0, "horas_oc": 284.87972222222226, "pct_oc": 0.07334881365418941, "exc_h": 329.5436111111111, "exc_pct": 0.08484855550182795, "exc_ev": 12515}, "tabela": [{"grupo": "FRENTE 1", "linhas": [{"frota": 62219, "litros": 799.4200000000001, "horas": 91.42333333333333, "ton": 1400.866, "lt": 0.570661290944316, "pct": 0.08873251418918097, "paradas": 609, "exc": 5.104444444444445, "exc_pct": 0.05583305988016675}, {"frota": 62230, "litros": 744.76, "horas": 82.04861111111111, "ton": 1648.519, "lt": 0.4517751994365852, "pct": 0.06839441388066017, "paradas": 423, "exc": 9.042222222222222, "exc_pct": 0.11020567075751163}, {"frota": 62233, "litros": 1785.93, "horas": 177.6977777777778, "ton": 352.233, "lt": 5.070308574154041, "pct": 0.055807926066730025, "paradas": 967, "exc": 6.470833333333333, "exc_pct": 0.036414824170876894}, {"frota": 62237, "litros": 968.26, "horas": 88.48833333333333, "ton": 2196.995, "lt": 0.44072016549878357, "pct": 0.06658756019312025, "paradas": 464, "exc": 2.52, "exc_pct": 0.028478330476710677}, {"frota": 62242, "litros": 1814.63, "horas": 152.95944444444444, "ton": 3016.62, "lt": 0.60154411228461, "pct": 0.04782131792377791, "paradas": 489, "exc": 11.742777777777778, "exc_pct": 0.07677053104127093}, {"frota": 62250, "litros": 1421.01, "horas": 153.57083333333333, "ton": 3972.109, "lt": 0.3577469802565841, "pct": 0.04004124046992431, "paradas": 604, "exc": 16.240833333333335, "exc_pct": 0.10575467346772663}, {"frota": 62271, "litros": 1486.96, "horas": 173.12194444444444, "ton": 3416.272, "lt": 0.43525808249460235, "pct": 0.05100771935004068, "paradas": 766, "exc": 14.115277777777777, "exc_pct": 0.08153372943605904}]}, {"grupo": "FRENTE 2", "linhas": [{"frota": 62236, "litros": 807.37, "horas": 73.99833333333333, "ton": 1676.899, "lt": 0.48146608710482863, "pct": 0.08666861866258249, "paradas": 241, "exc": 6.043888888888889, "exc_pct": 0.08167601372403283}, {"frota": 62263, "litros": 1681.85, "horas": 154.12555555555556, "ton": 3904.419, "lt": 0.43075551061502365, "pct": 0.08587515229286367, "paradas": 1148, "exc": 7.953055555555555, "exc_pct": 0.051601147693438966}, {"frota": 62264, "litros": 1541.01, "horas": 150.0861111111111, "ton": 2728.656, "lt": 0.5647505585167203, "pct": 0.08632451740667395, "paradas": 914, "exc": 2.223333333333333, "exc_pct": 0.014813718050748643}, {"frota": 62265, "litros": 1734.1399999999999, "horas": 168.24583333333334, "ton": 4098.73, "lt": 0.42309203094617115, "pct": 0.06818065496091202, "paradas": 1036, "exc": 8.254444444444445, "exc_pct": 0.04906180605430216}, {"frota": 62266, "litros": 1552.4, "horas": 152.48361111111112, "ton": 3250.536, "lt": 0.47758277404095817, "pct": 0.06609817812843274, "paradas": 865, "exc": 2.3869444444444445, "exc_pct": 0.015653776999713993}, {"frota": 62276, "litros": 1623.83, "horas": 155.73777777777778, "ton": 3373.049, "lt": 0.4814131072510361, "pct": 0.0945874118889301, "paradas": 1065, "exc": 10.197222222222223, "exc_pct": 0.06547686995234155}, {"frota": 62277, "litros": 1348.7, "horas": 126.94555555555556, "ton": 2847.735, "lt": 0.47360446108925164, "pct": 0.06465807739100751, "paradas": 586, "exc": 9.313888888888888, "exc_pct": 0.07336916088261809}, {"frota": 62279, "litros": 1601.84, "horas": 150.22611111111112, "ton": 2887.798, "lt": 0.554692537358915, "pct": 0.08537685784761488, "paradas": 892, "exc": 5.342777777777778, "exc_pct": 0.0355649077131879}]}, {"grupo": "FRENTE 3", "linhas": [{"frota": 62215, "litros": 1357.09, "horas": 127.53111111111112, "ton": 2323.948, "lt": 0.5839588493374206, "pct": 0.04862647894195752, "paradas": 489, "exc": 12.11888888888889, "exc_pct": 0.09502692153548589}, {"frota": 62229, "litros": 1489.48, "horas": 123.35694444444444, "ton": 1543.897, "lt": 0.9647534777255219, "pct": 0.05959895065133927, "paradas": 358, "exc": 24.279444444444444, "exc_pct": 0.19682268034272718}, {"frota": 62234, "litros": 1549.14, "horas": 141.5663888888889, "ton": 2433.838, "lt": 0.6365008681761071, "pct": 0.03573509876598926, "paradas": 587, "exc": 18.391666666666666, "exc_pct": 0.12991548919921747}, {"frota": 62240, "litros": 1636.91, "horas": 119.9475, "ton": 2817.993, "lt": 0.580877951080787, "pct": 0.036909666497611224, "paradas": 269, "exc": 11.005555555555556, "exc_pct": 0.091753104946377}, {"frota": 62241, "litros": 1187.59, "horas": 106.80222222222223, "ton": 2362.685, "lt": 0.5026442373824695, "pct": 0.07979182705311999, "paradas": 488, "exc": 8.176388888888889, "exc_pct": 0.07655635546492998}, {"frota": 62249, "litros": 1371.62, "horas": 98.54916666666666, "ton": 1333.295, "lt": 1.0287445764065715, "pct": 0.07420154068612114, "paradas": 340, "exc": 9.573055555555555, "exc_pct": 0.09713989351057142}, {"frota": 62252, "litros": 964.7, "horas": 99.85416666666667, "ton": 1749.69, "lt": 0.5513548114237379, "pct": 0.03359343487029696, "paradas": 172, "exc": 10.375833333333333, "exc_pct": 0.10390986855831419}, {"frota": 62254, "litros": 1250.61, "horas": 127.96333333333334, "ton": 1671.531, "lt": 0.748182354978759, "pct": 0.0322140891053861, "paradas": 371, "exc": 11.026666666666667, "exc_pct": 0.08617051759618641}]}, {"grupo": "FRENTE 5", "linhas": [{"frota": 62260, "litros": 1005.0, "horas": 53.43888888888889, "ton": 3717.263, "lt": 0.27036020857281284, "pct": 0.025335273936999688, "paradas": 58, "exc": 7.564166666666667, "exc_pct": 0.14154797796028692}, {"frota": 62282, "litros": 1055.0, "horas": 90.32888888888888, "ton": 2510.42, "lt": 0.4202484046494212, "pct": 0.016768967722889196, "paradas": 85, "exc": 5.9286111111111115, "exc_pct": 0.06563361050974219}]}, {"grupo": "FRENTE 6", "linhas": [{"frota": 22203, "litros": 1346.33, "horas": 146.69416666666666, "ton": 1219.285, "lt": 1.1041963117728832, "pct": 0.11008163242119376, "paradas": 1191, "exc": 21.049444444444443, "exc_pct": 0.14349203463744487}, {"frota": 22220, "litros": 1153.86, "horas": 135.44222222222223, "ton": 3693.632, "lt": 0.312391705508291, "pct": 0.11730094013027284, "paradas": 723, "exc": 14.500833333333333, "exc_pct": 0.10706287223744441}, {"frota": 22270, "litros": 1391.28, "horas": 154.09666666666666, "ton": 2497.511, "lt": 0.5570666155224141, "pct": 0.08922429643730127, "paradas": 576, "exc": 35.020833333333336, "exc_pct": 0.22726535291700017}, {"frota": 22271, "litros": 1259.21, "horas": 171.12138888888887, "ton": 3666.033, "lt": 0.34348026872644083, "pct": 0.20346505161215966, "paradas": 1091, "exc": 16.08222222222222, "exc_pct": 0.09398136800224662}, {"frota": 62238, "litros": 1335.95, "horas": 136.05138888888888, "ton": 2432.861, "lt": 0.5491271387884471, "pct": 0.09783884765764571, "paradas": 837, "exc": 7.498055555555555, "exc_pct": 0.0551119368702594}]}], "oc_faixa": [{"l": "Até 10%", "v": 239}, {"l": "10 a 20%", "v": 54}, {"l": "20 a 30%", "v": 4}, {"l": "30 a 40%", "v": 2}, {"l": "40 a 50%", "v": 2}, {"l": "Acima de 50%", "v": 0}], "oc_top": [{"l": "22271", "v": 34.81722222222222}, {"l": "22203", "v": 16.148333333333333}, {"l": "22220", "v": 15.8875}, {"l": "62276", "v": 14.730833333333333}, {"l": "22270", "v": 13.749166666666667}, {"l": "62238", "v": 13.311111111111112}, {"l": "62263", "v": 13.235555555555555}, {"l": "62264", "v": 12.956111111111111}, {"l": "62279", "v": 12.825833333333334}, {"l": "62265", "v": 11.471111111111112}], "oc_tab": [{"frota": 22271, "data": "21/10", "lig": 19.692777777777778, "oc": 5.183888888888889, "pct": 0.26323807374389935}, {"frota": 22271, "data": "19/10", "lig": 19.281944444444445, "oc": 4.995277777777778, "pct": 0.25906504357847726}, {"frota": 22271, "data": "16/10", "lig": 10.630833333333333, "oc": 4.052777777777778, "pct": 0.38122860651668367}, {"frota": 22220, "data": "21/10", "lig": 20.063055555555554, "oc": 3.7419444444444445, "pct": 0.18650920016060477}, {"frota": 22271, "data": "14/10", "lig": 7.096111111111111, "oc": 3.514166666666666, "pct": 0.49522430126047123}], "oc_dia": [{"l": "12/10", "v": 0.0705360045584683}, {"l": "13/10", "v": 0.06441387535871092}, {"l": "14/10", "v": 0.07759534932311293}, {"l": "15/10", "v": 0.07563130588836402}, {"l": "16/10", "v": 0.0835833026566606}, {"l": "17/10", "v": 0.07437205859023849}, {"l": "18/10", "v": 0.06284363750798783}, {"l": "19/10", "v": 0.07192695658748631}, {"l": "20/10", "v": 0.07191788637906078}, {"l": "21/10", "v": 0.08361695240625602}, {"l": "22/10", "v": 0.08123358416222348}], "lt_dia": [{"l": "12/10", "v": 0.5985684947526274}, {"l": "13/10", "v": 0.487667227599398}, {"l": "14/10", "v": 0.5520664121870142}, {"l": "15/10", "v": 0.9059671949635144}, {"l": "16/10", "v": 0.05345321858709076}, {"l": "17/10", "v": 0.4444853165676925}, {"l": "18/10", "v": 0.5257476667302476}, {"l": "19/10", "v": 0.5500372806217069}, {"l": "20/10", "v": 0.6129003480354405}, {"l": "21/10", "v": 0.46075941699260026}, {"l": "22/10", "v": 0.5259125076010362}], "litros_dia": [{"l": "12/10", "v": 3828.65}, {"l": "13/10", "v": 3881.52}, {"l": "14/10", "v": 3453.2400000000002}, {"l": "15/10", "v": 2605.25}, {"l": "16/10", "v": 152.0}, {"l": "17/10", "v": 3035.34}, {"l": "18/10", "v": 4729.83}, {"l": "19/10", "v": 4837.09}, {"l": "20/10", "v": 5427.49}, {"l": "21/10", "v": 4198.6900000000005}, {"l": "22/10", "v": 4116.78}], "ton_dia": [{"l": "12/10", "v": 6396.344}, {"l": "13/10", "v": 7959.362}, {"l": "14/10", "v": 6255.117}, {"l": "15/10", "v": 2875.656}, {"l": "16/10", "v": 2843.608}, {"l": "17/10", "v": 6828.887}, {"l": "18/10", "v": 8996.388}, {"l": "19/10", "v": 8794.113}, {"l": "20/10", "v": 8855.42}, {"l": "21/10", "v": 9112.543}, {"l": "22/10", "v": 7827.88}], "rpm": [{"l": "1 - 900 (lenta)", "v": 0.16215076634506773}, {"l": "901 - 1.500", "v": 0.634282743965558}, {"l": "1.501 - 1.700", "v": 0.1181898429772716}, {"l": "1.701 - 1.900", "v": 0.04761849245745118}, {"l": "1.901 - 2.100", "v": 0.02481719351090938}, {"l": "Acima de 2.100", "v": 0.012940960743742177}], "motivo": [{"l": "Sem Apontamento", "v": 105.84027777777779}, {"l": "Deslocamento Vazio", "v": 87.22527777777778}, {"l": "Deslocamento Carregado", "v": 44.6125}, {"l": "Manobra", "v": 39.67444444444445}, {"l": "Carregando Cana", "v": 7.527222222222222}], "oc_turno": [{"l": "A", "v": 98.73944444444444}, {"l": "B", "v": 100.03222222222222}, {"l": "C", "v": 86.10805555555555}], "meta_oc": 0.1, "notas": ["Só entram os transbordos das frentes com telemetria. Fora do painel: manutenção/reforma/parado (62228, 62232, 62253, 62272) e 41 frotas sem telemetria (sem registro no monit).", "Motor ocioso com desconto de 90 s por parada: 18.704 paradas com motor ligado; 11.469 duraram até 90 s e não contam. Sem o desconto seriam 617,4 h; com o desconto, 284,9 h.", "Dados na base: abastecimento até 22/10, balança até 25/10, monit até 23/10. O painel usa o período em que há abastecimento e balança."], "exc_fx": [{"l": "1.701 - 1.900", "h": 183.80166666666668, "ev": 6476}, {"l": "1.901 - 2.100", "h": 95.79138888888889, "ev": 3650}, {"l": "Acima de 2.100", "h": 49.95055555555555, "ev": 2389}], "exc_top": [{"l": "22270", "v": 35.020833333333336}, {"l": "62229", "v": 24.279444444444444}, {"l": "22203", "v": 21.049444444444443}, {"l": "62234", "v": 18.391666666666666}, {"l": "62250", "v": 16.240833333333335}, {"l": "22271", "v": 16.08222222222222}, {"l": "22220", "v": 14.500833333333333}, {"l": "62271", "v": 14.115277777777777}, {"l": "62215", "v": 12.11888888888889}, {"l": "62242", "v": 11.742777777777778}], "exc_estado": [{"l": "Deslocamento", "v": 129.94027777777777}, {"l": "Desloc. p/ descarga", "v": 102.89361111111111}, {"l": "Manobra", "v": 57.62611111111111}, {"l": "Trabalhando", "v": 25.721666666666668}, {"l": "Basculando", "v": 11.538055555555555}, {"l": "Parada", "v": 1.823888888888889}], "exc_turno": [{"l": "A", "v": 97.34472222222222}, {"l": "B", "v": 123.10527777777777}, {"l": "C", "v": 109.09361111111112}], "exc_dia": [{"l": "12/10", "v": 0.08466096392028274}, {"l": "13/10", "v": 0.0866963107640626}, {"l": "14/10", "v": 0.07613383464517906}, {"l": "15/10", "v": 0.08772980681619591}, {"l": "16/10", "v": 0.10079747199918357}, {"l": "17/10", "v": 0.09228843882749017}, {"l": "18/10", "v": 0.09632093920895538}, {"l": "19/10", "v": 0.08372321892962913}, {"l": "20/10", "v": 0.0799172377343079}, {"l": "21/10", "v": 0.07434343509941169}, {"l": "22/10", "v": 0.08106947758577676}], "exc_lim": 1700};
+const D={"periodo": "19/10/2026 - 25/10/2026", "K": {"litros": 19799.0, "frotas": 25, "ton": 32917.0, "lt": 0.601482516632743, "meta": 1.0, "horas": 1874.8, "lh": 10.56059312993386, "meta_lh": 9.137001280136548, "horas_oc": 104.95944444444443, "horas_oc_bruto": 158.59972222222223, "paradas": 3018, "paradas_90": 1409, "pct_oc": 0.055520568327118394}, "tabela": [{"grupo": "FRENTE 1", "linhas": [{"frota": 62250, "meta": 8.0, "horas": 105.2, "litros": 952.0, "lh": 9.05, "ton": 2018.0, "lt": 0.47, "pct": 0.03148844199752919, "paradas": 101}, {"frota": 62228, "meta": 9.5, "horas": 0, "litros": 0, "lh": null, "ton": null, "lt": null, "pct": 0.058588835771539484, "paradas": 24}, {"frota": 62237, "meta": 9.5, "horas": 71.1, "litros": 794.0, "lh": 11.17, "ton": 2396.0, "lt": 0.33, "pct": 0.05245121670055124, "paradas": 117}, {"frota": 62243, "meta": 9.5, "horas": 0, "litros": 0, "lh": null, "ton": null, "lt": null, "pct": null, "paradas": null}, {"frota": 62245, "meta": 9.5, "horas": 0, "litros": 0, "lh": null, "ton": null, "lt": null, "pct": null, "paradas": null}, {"frota": 62232, "meta": 9.5, "horas": 8.4, "litros": 115.0, "lh": 13.69, "ton": 11.0, "lt": 10.71, "pct": 0.10207904101891745, "paradas": 32}, {"frota": 62233, "meta": 9.5, "horas": 110.4, "litros": 1145.0, "lh": 10.37, "ton": 501.0, "lt": 2.28, "pct": 0.05623342554271291, "paradas": 239}, {"frota": 62242, "meta": 9.5, "horas": 105.6, "litros": 1179.0, "lh": 11.16, "ton": 1845.0, "lt": 0.64, "pct": 0.04173231517323655, "paradas": 114}, {"frota": 62271, "meta": 8.0, "horas": 94.4, "litros": 796.0, "lh": 8.44, "ton": 1959.0, "lt": 0.41, "pct": 0.06745727658338008, "paradas": 176}, {"frota": 62272, "meta": 8.0, "horas": 79.9, "litros": 781.0, "lh": 9.77, "ton": 1011.0, "lt": 0.77, "pct": 0.06637462044534416, "paradas": 221}], "tot": {"horas": 575.0, "litros": 5762.0, "ton": 9741.0, "meta": 8.77086956521739, "lh": 10.02086956521739, "lt": 0.5915203777846217}}, {"grupo": "FRENTE 2", "linhas": [{"frota": 62263, "meta": 9.5, "horas": 75.3, "litros": 882.0, "lh": 11.71, "ton": 1596.0, "lt": 0.55, "pct": 0.08668342213732771, "paradas": 190}, {"frota": 62264, "meta": 9.5, "horas": 75.9, "litros": 842.0, "lh": 11.09, "ton": 1956.0, "lt": 0.43, "pct": 0.04384095263732958, "paradas": 119}, {"frota": 62265, "meta": 9.5, "horas": 97.7, "litros": 1105.0, "lh": 11.31, "ton": 1918.0, "lt": 0.58, "pct": 0.0483239913029354, "paradas": 125}, {"frota": 62266, "meta": 9.5, "horas": 88.0, "litros": 972.0, "lh": 11.04, "ton": 1933.0, "lt": 0.5, "pct": 0.03234396540550731, "paradas": 76}, {"frota": 62276, "meta": 9.5, "horas": 107.1, "litros": 1067.0, "lh": 9.96, "ton": 1970.0, "lt": 0.54, "pct": 0.07104274739204453, "paradas": 102}, {"frota": 62277, "meta": 9.5, "horas": 83.5, "litros": 890.0, "lh": 10.66, "ton": 1676.0, "lt": 0.53, "pct": 0.06645039357805319, "paradas": 139}, {"frota": 62279, "meta": 9.5, "horas": 106.1, "litros": 1158.0, "lh": 10.92, "ton": 1773.0, "lt": 0.65, "pct": 0.04556045462906705, "paradas": 121}, {"frota": 62236, "meta": 9.5, "horas": 54.7, "litros": 652.0, "lh": 11.92, "ton": 895.0, "lt": 0.73, "pct": 0.11522348026300173, "paradas": 87}], "tot": {"horas": 688.3, "litros": 7568.0, "ton": 13717.0, "meta": 9.500000000000002, "lh": 10.995205578962663, "lt": 0.5517241379310345}}, {"grupo": "FRENTE 3", "linhas": [{"frota": 62215, "meta": 8.0, "horas": 79.9, "litros": 759.0, "lh": 9.5, "ton": 1889.0, "lt": 0.4, "pct": 0.054105747304388774, "paradas": 94}, {"frota": 62253, "meta": 8.0, "horas": 20.0, "litros": 211.0, "lh": 10.54, "ton": 266.0, "lt": 0.79, "pct": 0.025453190961013162, "paradas": 4}, {"frota": 62254, "meta": 8.0, "horas": 74.3, "litros": 705.0, "lh": 9.49, "ton": 631.0, "lt": 1.12, "pct": 0.028086637505291383, "paradas": 118}, {"frota": 62229, "meta": 9.5, "horas": 65.0, "litros": 800.0, "lh": 12.3, "ton": 799.0, "lt": 1.0, "pct": 0.08297233225998255, "paradas": 145}, {"frota": 62234, "meta": 9.5, "horas": 88.3, "litros": 950.0, "lh": 10.76, "ton": 1035.0, "lt": 0.92, "pct": 0.043103001320568844, "paradas": 237}, {"frota": 62240, "meta": 9.5, "horas": 71.8, "litros": 877.0, "lh": 12.21, "ton": 1356.0, "lt": 0.65, "pct": 0.052835427660900366, "paradas": 69}, {"frota": 62241, "meta": 9.5, "horas": 61.7, "litros": 637.0, "lh": 10.32, "ton": 748.0, "lt": 0.85, "pct": 0.08222610722610722, "paradas": 167}, {"frota": 62249, "meta": 9.5, "horas": 73.8, "litros": 752.0, "lh": 10.19, "ton": 1258.0, "lt": 0.6, "pct": 0.08151232921675625, "paradas": 105}, {"frota": 62252, "meta": 9.5, "horas": 76.7, "litros": 778.0, "lh": 10.14, "ton": 1477.0, "lt": 0.53, "pct": 0.032321489001692044, "paradas": 96}], "tot": {"horas": 611.5, "litros": 6469.0, "ton": 9459.0, "meta": 9.072690106295994, "lh": 10.578904333605887, "lt": 0.6838989322338513}}], "frentes": [{"l": "Frente 1", "horas": 575.0, "litros": 5762.0, "ton": 9741.0, "meta": 8.77086956521739, "lh": 10.02086956521739, "lt": 0.5915203777846217}, {"l": "Frente 2", "horas": 688.3, "litros": 7568.0, "ton": 13717.0, "meta": 9.500000000000002, "lh": 10.995205578962663, "lt": 0.5517241379310345}, {"l": "Frente 3", "horas": 611.5, "litros": 6469.0, "ton": 9459.0, "meta": 9.072690106295994, "lh": 10.578904333605887, "lt": 0.6838989322338513}], "meta_oc": 0.1, "oc_frota": [{"l": "62236", "v": 0.11522348026300173}, {"l": "62232", "v": 0.10207904101891745}, {"l": "62263", "v": 0.08668342213732771}, {"l": "62229", "v": 0.08297233225998255}, {"l": "62241", "v": 0.08222610722610722}, {"l": "62249", "v": 0.08151232921675625}, {"l": "62276", "v": 0.07104274739204453}, {"l": "62271", "v": 0.06745727658338008}, {"l": "62277", "v": 0.06645039357805319}, {"l": "62272", "v": 0.06637462044534416}, {"l": "62228", "v": 0.058588835771539484}, {"l": "62233", "v": 0.05623342554271291}, {"l": "62215", "v": 0.054105747304388774}, {"l": "62240", "v": 0.052835427660900366}, {"l": "62237", "v": 0.05245121670055124}, {"l": "62265", "v": 0.0483239913029354}, {"l": "62279", "v": 0.04556045462906705}, {"l": "62264", "v": 0.04384095263732958}, {"l": "62234", "v": 0.043103001320568844}, {"l": "62242", "v": 0.04173231517323655}, {"l": "62266", "v": 0.03234396540550731}, {"l": "62252", "v": 0.032321489001692044}, {"l": "62250", "v": 0.03148844199752919}, {"l": "62254", "v": 0.028086637505291383}, {"l": "62253", "v": 0.025453190961013162}], "oc_top": [{"l": "62271", "v": 6.577777777777776}, {"l": "62233", "v": 6.555833333333328}, {"l": "62263", "v": 5.98777777777777}, {"l": "62229", "v": 5.969444444444444}, {"l": "62276", "v": 5.900277777777778}, {"l": "62241", "v": 5.879166666666666}, {"l": "62277", "v": 5.68416666666667}, {"l": "62249", "v": 5.518611111111111}, {"l": "62236", "v": 5.393611111111111}, {"l": "62265", "v": 4.710555555555556}], "oc_dia": [{"l": "19/10", "v": 0.05909560250448535}, {"l": "20/10", "v": 0.06100874910837662}, {"l": "21/10", "v": 0.04993320070133902}, {"l": "22/10", "v": 0.0586759099051723}, {"l": "23/10", "v": 0.08950451126271242}, {"l": "24/10", "v": 0.0548156907519165}, {"l": "25/10", "v": 0.03461425700112084}], "rpm": [{"l": "1 - 900 (lenta)", "v": 0.16527571617615813}, {"l": "901 - 1.650", "v": 0.7418628735090714}, {"l": "1.651 - 1.800", "v": 0.045195335998370764}, {"l": "1.801 - 2.000", "v": 0.02978271902584585}, {"l": "Acima de 2.000", "v": 0.01788335529055383}], "rpm_frente": [{"l": "Frente 1", "b0": 0.14799122784858681, "b1": 0.7657542731024468, "b2": 0.039704838062305105, "b3": 0.028317227042102773, "b4": 0.01823243394455843}, {"l": "Frente 2", "b0": 0.22330097493759093, "b1": 0.7183040639979641, "b2": 0.0312911770073451, "b3": 0.01673031749513201, "b4": 0.01037346656196789}, {"l": "Frente 3", "b0": 0.12065866634370497, "b1": 0.7441498296552559, "b2": 0.06492188363900606, "b3": 0.04484077461661463, "b4": 0.02542884574541842}], "rpm_top": [{"l": "62228", "v": 0.3034398475971389}, {"l": "62253", "v": 0.2462751427861932}, {"l": "62229", "v": 0.21952340136369602}, {"l": "62252", "v": 0.1479424703891709}, {"l": "62250", "v": 0.14551568389328814}, {"l": "62215", "v": 0.13612070661622172}, {"l": "62240", "v": 0.12283566430808308}, {"l": "62236", "v": 0.12240974150822474}, {"l": "62234", "v": 0.12152283242194767}, {"l": "62272", "v": 0.11112648658906883}], "motivo": [{"l": "Sem Apontamento", "v": 104.87805555555528}, {"l": "Transbordo Alocado", "v": 0.06972222222222223}, {"l": "Fila Unica", "v": 0.011666666666666665}], "oc_turno": [{"l": "A", "v": 35.460743870112644}, {"l": "B", "v": 39.16777777777775}, {"l": "C", "v": 30.330922796554038}], "oc_op": [{"l": "Joao Augusto Oliveira De Jesus", "v": 0.17423026202625996, "lig": 19.378888888888888, "oc": 3.376388888888889, "fr": "62236"}, {"l": "Paulo Cesar De Faria Junior", "v": 0.13373132422423703, "lig": 8.70111111111111, "oc": 1.1636111111111114, "fr": "62236, 62266, 62276"}, {"l": "Bruno Guimarães Bernardes", "v": 0.1310131035089262, "lig": 12.634444444444444, "oc": 1.6552777777777776, "fr": "62241"}, {"l": "Sem Operador", "v": 0.13091991693978136, "lig": 11.103055555555555, "oc": 1.4536111111111114, "fr": "12 transbordos"}, {"l": "Leandro Bezerra Da Silva Neto", "v": 0.1278674225904928, "lig": 19.108333333333334, "oc": 2.4433333333333334, "fr": "62249"}, {"l": "Michael De Freitas Rodrigues", "v": 0.12430951116977776, "lig": 19.360277777777778, "oc": 2.4066666666666667, "fr": "62215"}, {"l": "Waldiney Justino Ferreira", "v": 0.12347488185994435, "lig": 16.870277777777776, "oc": 2.0830555555555557, "fr": "62249"}, {"l": "Claudlanio Silva De Melo", "v": 0.1193821378687043, "lig": 20.285, "oc": 2.421666666666667, "fr": "62237"}, {"l": "Juliano Francelino De Queiroz", "v": 0.11506428287207915, "lig": 20.244722222222222, "oc": 2.3294444444444444, "fr": "62263"}, {"l": "Cleudilson Targino Da Silva", "v": 0.1037803457851832, "lig": 31.008333333333333, "oc": 3.218055555555556, "fr": "62271"}], "longas": [{"frota": "62263", "p10": 8, "p30": 0, "h10": 2.2544444444444443}, {"frota": "62277", "p10": 5, "p30": 0, "h10": 1.0155555555555555}, {"frota": "62250", "p10": 3, "p30": 1, "h10": 0.9391666666666667}, {"frota": "62272", "p10": 3, "p30": 0, "h10": 0.6355555555555555}, {"frota": "62279", "p10": 3, "p30": 0, "h10": 0.5486111111111112}, {"frota": "62242", "p10": 2, "p30": 0, "h10": 0.5136111111111111}, {"frota": "62241", "p10": 2, "p30": 0, "h10": 0.4766666666666667}, {"frota": "62276", "p10": 2, "p30": 0, "h10": 0.38166666666666665}], "notas": ["Litros, horas, toneladas, L/h e L/t: coluna SEMANA (19/10 a 25/10/2026) do Indicador de Consumo de Combustível — Tratores Transbordo, atualizado em 28/10/2026 11:01. Frentes 1, 2 e 3.", "Motor ocioso, paradas, RPM, motivos, turnos e operadores: monit de 19/10 a 25/10/2026. Sem telemetria nesse período: 62243, 62245 (aparecem na tabela só com os dados de consumo).", "Atenção: segundo o indicador, o abastecimento é lançado à mão e está integrado só até 22/10/2026; o diesel da semana depois dessa data pode estar incompleto.", "No monit nas frentes 1, 2 e 3, mas sem lançamento nessas frentes no indicador (não entram): 62219, 62230, 62256.", "Motor ocioso descontando 90 s de cada parada: 3.018 paradas com motor ligado; 1.609 duraram até 90 s e não contam. Sem o desconto seriam 158,6 h; com o desconto, 105,0 h."]};
 const NF=d=>new Intl.NumberFormat('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}).format;
 const f0=NF(0),f1=NF(1),f2=NF(2),brl=v=>'R$ '+f2(v),pc=(v,d=2)=>NF(d)(v*100)+'%';
 const NS='http://www.w3.org/2000/svg';
@@ -158,29 +153,37 @@ function tip(box){let t=box.querySelector('.tip');if(!t){t=document.createElemen
  return (ev,txt)=>{if(!ev){t.hidden=true;return}t.textContent=txt;t.hidden=false;const r=box.getBoundingClientRect();let x=ev.clientX-r.left+10;if(x+t.offsetWidth>r.width)x=r.width-t.offsetWidth;t.style.left=x+'px';t.style.top=(ev.clientY-r.top-30)+'px'}}
 function hover(node,box,txt){const T=tip(box);node.addEventListener('mousemove',e=>T(e,txt));node.addEventListener('mouseleave',()=>T())}
 
+/* ícones */
 const IC={
  bomba:'<rect x="5" y="5" width="13" height="21" rx="2" fill="#d64550"/><rect x="8" y="8" width="7" height="5" fill="#fff"/><path d="M18 10h3l2 3v9a2 2 0 0 1-4 0v-5h-1" fill="none" stroke="#d64550" stroke-width="2"/><rect x="3" y="25" width="17" height="3" fill="#8a1f28"/>',
+ saco:'<path d="M11 6h8l-2 4h-4z" fill="#b8860b"/><path d="M8 13c0-3 4-4 7-4s7 1 7 4c3 4 4 8 2 11-1 2-4 3-9 3s-8-1-9-3c-2-3-1-7 2-11z" fill="#e0a526"/><text x="15" y="23" font-size="9" text-anchor="middle" fill="#fff" font-weight="700">$</text>',
  caminhao:'<rect x="2" y="9" width="17" height="11" rx="1" fill="#e8eaee" stroke="#555" stroke-width="1.2"/><path d="M19 12h5l4 4v4h-9z" fill="#2e7d32"/><circle cx="7" cy="22" r="3" fill="#333"/><circle cx="23" cy="22" r="3" fill="#333"/>',
  estrada:'<rect x="1" y="3" width="28" height="24" rx="3" fill="#2e8b57"/><path d="M11 27l3-24h2l3 24z" fill="#555"/><path d="M15 6v4M15 13v4M15 20v4" stroke="#fff" stroke-width="1.2"/><rect x="1" y="3" width="28" height="9" rx="3" fill="#4aa3df" opacity=".6"/>',
  grafico:'<rect x="2" y="3" width="26" height="24" rx="2" fill="#e6efff" stroke="#9db6e8"/><path d="M5 22l6-6 5 4 9-11" fill="none" stroke="#3a6fd8" stroke-width="2.2" stroke-linecap="round"/>',
  alvo:'<circle cx="14" cy="16" r="11" fill="#d64550"/><circle cx="14" cy="16" r="7.5" fill="#fff"/><circle cx="14" cy="16" r="4" fill="#d64550"/><path d="M14 16L27 4" stroke="#22378c" stroke-width="2"/><path d="M24 3l4 0-1 4" fill="#22378c"/>',
- velo:'<path d="M3 22a12 12 0 0 1 24 0" fill="none" stroke="#22378c" stroke-width="3"/><path d="M21 13a12 12 0 0 1 6 9" fill="none" stroke="#d64550" stroke-width="3"/><path d="M15 22l7-8" stroke="#1d2433" stroke-width="2.2" stroke-linecap="round"/><circle cx="15" cy="22" r="2.4" fill="#1d2433"/>',
- raio:'<path d="M17 2L6 17h7l-3 12 13-17h-8z" fill="#f08a24"/>'
+ relogio:'<circle cx="15" cy="15" r="12" fill="#e6efff" stroke="#22378c" stroke-width="2"/><path d="M15 8v7l5 3" fill="none" stroke="#22378c" stroke-width="2.2" stroke-linecap="round"/>',
+ dolar:'<text x="15" y="25" font-size="26" text-anchor="middle" fill="#2e9e4f" font-weight="800">$</text>',
+ raio:'<path d="M17 2L6 17h7l-3 12 13-17h-8z" fill="#f08a24"/>',
+ dinheiro:'<g transform="rotate(-25 15 15)"><rect x="3" y="9" width="22" height="13" rx="2" fill="#3aa35a"/><circle cx="14" cy="15.5" r="3.5" fill="#bfe8c9"/></g><circle cx="22" cy="22" r="5" fill="#f2c230"/>'
 };
 const K=D.K;
 const kpis=[['bomba',f2(K.litros),'Litros Abast',''],['caminhao',f0(K.frotas),'Transbordos',''],['estrada',f2(K.ton),'Toneladas',''],
- ['grafico',f2(K.lt),'Média L/t','gray'],['alvo',f2(K.meta),'Meta L/t','green'],['raio',f1(K.horas_oc)+' h ('+pc(K.pct_oc,1)+')','Motor Ocioso','red'],['velo',f1(K.exc_h)+' h ('+pc(K.exc_pct,1)+')','RPM > 1.700','red']];
+ ['relogio',f2(K.lh),'Média L/h',K.lh<=K.meta_lh?'green':'red'],['alvo',f2(K.meta_lh),'Meta L/h (média)','green'],['grafico',f2(K.lt),'Média L/t','gray'],['raio',f1(K.horas_oc)+' h ('+pc(K.pct_oc,1)+')','Motor Ocioso','red']];
 document.getElementById('kpis').innerHTML=kpis.map(([i,v,l,c])=>`<div class="kpi"><svg viewBox="0 0 30 30" aria-hidden="true">${IC[i]}</svg><div><span class="v ${c}">${v}</span><span class="l">${l}</span></div></div>`).join('');
 document.getElementById('periodo').textContent='PERÍODO '+D.periodo;
 
-const kc=v=>v==null?'':(v>=K.meta?'kgn':(v>=0.85?'kg':(v>=0.5?'ky':'kr')));
+/* tabela */
+const kc=v=>v==null?'':(v<=K.meta?'kgn':(v<=1.15?'kg':(v<=1.5?'ky':'kr')));
 const tb=document.getElementById('tab');
-D.tabela.forEach(g=>{const r=tb.insertRow();r.className='g';const c=r.insertCell();c.colSpan=8;c.textContent=g.grupo;
+D.tabela.forEach(g=>{const r=tb.insertRow();r.className='g';const c=r.insertCell();c.colSpan=9;c.textContent=g.grupo;
  g.linhas.forEach(x=>{const tr=tb.insertRow();const z=v=>v==null||v===0;
-  [[String(x.frota),''],[z(x.litros)?'':f0(x.litros),'i'],[z(x.horas)?'-':f1(x.horas),''],
-   [x.ton==null?'':f2(x.ton),'ton'],[x.lt==null?'':f2(x.lt),'i '+kc(x.lt)],[x.pct==null?'':pc(x.pct,1),x.pct!=null&&x.pct>D.meta_oc?'kr':''],[x.paradas==null?'':f0(x.paradas),'i'],[x.exc==null?'':f1(x.exc),x.exc_pct>0.10?'kr':'']]
-  .forEach(([t,cl])=>{const td=tr.insertCell();td.textContent=t;if(cl)td.className=cl})})});
-
+  [[String(x.frota),''],[z(x.litros)?'':f0(x.litros),'i'],[z(x.horas)?'-':f1(x.horas),''],[x.lh==null?'':f2(x.lh),'i lh '+(x.lh<=x.meta?'kgn':'kr')],[f2(x.meta),'meta'],
+   [x.ton==null?'':f0(x.ton),'ton'],[x.lt==null?'':f2(x.lt),'i'],[x.pct==null?'':pc(x.pct,1),x.pct!=null&&x.pct>D.meta_oc?'kr':''],[x.paradas==null?'':f0(x.paradas),'i']]
+  .forEach(([t,cl])=>{const td=tr.insertCell();td.textContent=t;if(cl)td.className=cl})});
+ if(g.tot){const T=g.tot,tr=tb.insertRow();tr.className='t';
+  [['Total',''],[f0(T.litros),''],[f1(T.horas),''],[f2(T.lh),'lh '+(T.lh<=T.meta?'kgn':'kr')],[f2(T.meta),'meta'],[f0(T.ton),'ton'],[f2(T.lt),''],['',''],['','']]
+  .forEach(([t,cl])=>{const td=tr.insertCell();td.textContent=t;if(cl)td.className=cl})}});
+/* barras verticais com rótulo em cima (estilo Power BI) */
 function vbars(id,rows,opt){const box=document.getElementById(id);const W=opt.w||560,H=opt.h||150,top=26,bot=opt.bot||40;
  const s=svg(box,W,H);const max=Math.max(...rows.map(r=>r.v),1);const n=rows.length;const slot=W/n;const bw=Math.min(opt.bw||60,slot*.55);
  rows.forEach((r,i)=>{const cx=slot*i+slot/2;const h=Math.max(r.v>0?2:1,(H-top-bot)*r.v/max*(opt.scale||1));const y=H-bot-h;
@@ -189,6 +192,7 @@ function vbars(id,rows,opt){const box=document.getElementById(id);const W=opt.w|
   String(r.l).split('\n').forEach((ln,k)=>el('text',{x:cx,y:H-bot+16+k*14,'text-anchor':'middle','font-size':12},s,ln));});
  if(opt.line){const yv=H-bot-(H-top-bot)*opt.line/max;el('line',{x1:slot*.3,x2:W-slot*.3,y1:yv,y2:yv,stroke:'#22378c','stroke-width':3},s)}}
 
+/* barras horizontais com valor à direita */
 function hbars(id,rows,opt){const box=document.getElementById(id);const W=opt.w||300,rh=opt.rh||23,lw=opt.lw||56,H=rows.length*rh+6;
  const s=svg(box,W,H);const max=Math.max(...rows.map(r=>r.v),1e-9);const bwMax=W-lw-opt.vw;
  rows.forEach((r,i)=>{const y=i*rh+3;const w=Math.max(2,bwMax*r.v/max);
@@ -196,18 +200,21 @@ function hbars(id,rows,opt){const box=document.getElementById(id);const W=opt.w|
   const rc=el('rect',{x:lw,y:y+4,width:w,height:rh-9,fill:opt.color?opt.color(r,i):'#22378c'},s);hover(rc,box,`${r.l}: ${opt.fmt(r.v)}`);
   el('text',{x:lw+w+6,y:y+rh/2+4,'font-size':opt.fs||12,'font-weight':opt.bold?700:400},s,opt.fmt(r.v));});}
 
-function linha(id,rows,meta,opt){const box=document.getElementById(id);const W=opt.w||560,H=opt.h||120,l=30,r=40,top=24,bot=26;
+/* linha com meta */
+function linha(id,rows,meta,opt){const box=document.getElementById(id);const W=opt.w||560,H=opt.h||120,l=30,r=opt.r||40,top=24,bot=26;
  const s=svg(box,W,H);const n=rows.length;const xs=i=>n===1?(l+W-r)/2:l+(W-l-r)*i/(n-1);
- const vals=rows.map(d=>d.v).concat([meta]);const lo=Math.min(...vals)*opt.lo,hi=Math.max(...vals)*opt.hi;const ys=v=>H-bot-(H-top-bot)*(v-lo)/(hi-lo);
+ const vals=rows.map(d=>d.v).concat(meta==null?[]:[meta]);const lo=Math.min(...vals)*opt.lo,hi=Math.max(...vals)*opt.hi;const ys=v=>H-bot-(H-top-bot)*(v-lo)/(hi-lo);
  if(opt.area&&n>1){el('path',{d:`M${xs(0)},${H-bot} `+rows.map((d,i)=>`L${xs(i)},${ys(d.v)}`).join(' ')+` L${xs(n-1)},${H-bot}Z`,fill:'#22378c',opacity:.35},s)}
- el('line',{x1:l,x2:W-r,y1:ys(meta),y2:ys(meta),stroke:'#2e7d32','stroke-width':3},s);
- el('text',{x:W-r+4,y:ys(meta)-4,'font-size':12,'font-weight':700,fill:'#2e7d32'},s,opt.fmt(meta));
+ if(opt.area&&n===1){el('rect',{x:xs(0)-30,y:ys(rows[0].v),width:60,height:H-bot-ys(rows[0].v),fill:'#22378c',opacity:.25},s)}
+ if(meta!=null){el('line',{x1:l,x2:W-r,y1:ys(meta),y2:ys(meta),stroke:'#2e7d32','stroke-width':3},s);
+ el('text',{x:W-r+(opt.mdx||4),y:ys(meta)-4,'font-size':12,'font-weight':700,fill:'#2e7d32'},s,opt.fmt(meta));}
  if(n>1)el('path',{d:rows.map((d,i)=>`${i?'L':'M'}${xs(i)},${ys(d.v)}`).join(' '),fill:'none',stroke:'#22378c','stroke-width':2.5,'stroke-dasharray':opt.area?'7 4':''},s);
  rows.forEach((d,i)=>{const c=el('circle',{cx:xs(i),cy:ys(d.v),r:5,fill:'#22378c'},s);hover(c,box,`${d.l}: ${opt.fmt(d.v)}`);
-  el('circle',{cx:xs(i),cy:ys(meta),r:4,fill:'#2e7d32'},s);
+  if(meta!=null)el('circle',{cx:xs(i),cy:ys(meta),r:4,fill:'#2e7d32'},s);
   el('text',{x:xs(i),y:opt.below?ys(d.v)+20:ys(d.v)-9,'text-anchor':'middle','font-size':13,'font-weight':700},s,opt.fmt(d.v));
   el('text',{x:xs(i),y:H-4,'text-anchor':'middle','font-size':12},s,d.l);});}
 
+/* rosca de turnos */
 function rosca(id,rows){const box=document.getElementById(id);const W=240,H=190,cx=W/2,cy=H/2,R=70,ri=46;const s=svg(box,W,H);
  const tot=rows.reduce((a,r)=>a+r.v,0)||1;const cor={A:'#d64550',B:'#d9b51f',C:'#6b6b6b'};let a0=-Math.PI/2+.0001;
  rows.forEach(r=>{const a1=a0+2*Math.PI*r.v/tot;const big=a1-a0>Math.PI?1:0;const P=(rr,a)=>[cx+rr*Math.cos(a),cy+rr*Math.sin(a)];
@@ -216,27 +223,48 @@ function rosca(id,rows){const box=document.getElementById(id);const W=240,H=190,
   hover(p,box,`Turno ${r.l}: ${f1(r.v)} h ociosas`);
   const am=(a0+a1)/2;const [lx,ly]=P(R+20,am);el('text',{x:lx,y:ly+4,'text-anchor':Math.cos(am)>0.2?'start':(Math.cos(am)<-0.2?'end':'middle'),'font-size':12,'font-weight':700},s,NF(0)(r.v/tot*100)+'%');a0=a1;});}
 
-vbars('c-ocfx',D.oc_faixa.map(r=>({l:r.l.replace('Acima de 50%','Acima de\n50%'),v:r.v})),{w:600,h:150,fmt:f0,bw:40,bot:44});
+/* barras de % com linha da meta */
+function meta_bars(id,rows,o){const box=document.getElementById(id);const W=o.w,rh=o.rh,lw=o.lw,H=rows.length*rh+22;const s=svg(box,W,H);
+ const max=Math.max(...rows.map(r=>r.v),D.meta_oc*1.2);const bw=W-lw-o.vw;const xm=lw+bw*D.meta_oc/max;
+ rows.forEach((r,i)=>{const y=i*rh+4;const w=Math.max(2,bw*r.v/max);
+  el('text',{x:lw-8,y:y+rh/2+4,'text-anchor':'end','font-size':o.fs||12},s,r.l);
+  const rc=el('rect',{x:lw,y:y+3,width:w,height:rh-7,fill:r.v>D.meta_oc?'#d64550':'#2e7d32'},s);hover(rc,box,r.t||`${r.l}: ${pc(r.v,1)}`);
+  el('text',{x:lw+w+6,y:y+rh/2+4,'font-size':o.fs||12,'font-weight':700},s,pc(r.v,1));});
+ el('line',{x1:xm,x2:xm,y1:0,y2:rows.length*rh+6,stroke:'#22378c','stroke-width':2,'stroke-dasharray':'5 4'},s);
+ el('text',{x:xm,y:rows.length*rh+18,'text-anchor':'middle','font-size':11,'font-weight':700,fill:'#22378c'},s,'meta 10%');}
+/* motor ocioso */
+meta_bars('c-ocfx',D.oc_frota,{w:600,lw:52,vw:52,rh:20});
 hbars('c-octop',D.oc_top,{w:230,vw:46,fmt:f1,lw:52});
-const to=document.getElementById('t-oc');D.oc_tab.forEach(r=>{const tr=to.insertRow();[String(r.frota),r.data,f2(r.lig),f2(r.oc),pc(r.pct)].forEach(t=>{tr.insertCell().textContent=t})});
+const to=document.getElementById('t-oc');D.longas.forEach(r=>{const tr=to.insertRow();[r.frota,f0(r.p10),f0(r.p30),f1(r.h10)].forEach(t=>{tr.insertCell().textContent=t})});
+meta_bars('c-op',D.oc_op.map(r=>({l:(w=>w.length>1?w[0]+' '+w[w.length-1]:w[0])(r.l.split(' ')),v:r.v,t:`${r.l} (${r.fr}): ${f1(r.oc)} h ociosas de ${f1(r.lig)} h ligado`})),{w:400,lw:150,vw:48,rh:24,fs:11});
 linha('c-ocdia',D.oc_dia,D.meta_oc,{w:380,h:120,fmt:v=>NF(0)(v*100)+'%',lo:0,hi:1.25,area:true});
 
-linha('c-lt',D.lt_dia,K.meta,{w:600,h:110,fmt:f2,lo:.85,hi:1.08});
-const lm=D.litros_dia.reduce((a,r)=>a+r.v,0)/D.litros_dia.length;document.getElementById('lit-media').textContent=f0(lm);
-vbars('c-lit',D.litros_dia,{w:600,h:150,fmt:f0,bw:40,bot:28,line:lm,scale:.92,color:r=>r.v>lm?'#d64550':'#2e7d32'});
+/* L/t e litros */
+vbars('c-lh',D.frentes.map(r=>({l:r.l+'\nmeta '+f2(r.meta),v:r.lh,m:r.meta})),{w:600,h:160,fmt:f2,bw:60,bot:42,scale:.92,color:r=>r.v<=r.m?'#2e7d32':'#d64550'});
+vbars('c-lt',D.frentes.map(r=>({l:r.l,v:r.lt})),{w:600,h:150,fmt:f2,bw:60,bot:28,scale:.92});
 
-hbars('c-rpm',D.rpm,{w:400,vw:62,lw:112,rh:29,fmt:v=>pc(v),bold:true,color:r=>({'1 - 900 (lenta)':'#e8c95a','1.701 - 1.900':'#f0a04b','1.901 - 2.100':'#e06a2c','Acima de 2.100':'#c62828'})[r.l]||'#22378c'});
 
-hbars('c-motivo',D.motivo.map(r=>({l:r.l.replace('Unica','Única'),v:r.v})),{w:400,vw:46,lw:178,fmt:f1,bold:true,fs:11,color:r=>r.l==='Sem Apontamento'?'#d64550':'#22378c'});
+/* RPM */
+const CORES_RPM=['#2e7d32','#22378c','#f2d98a','#f4b183','#d64550'];
+hbars('c-rpm',D.rpm,{w:400,vw:62,lw:112,rh:29,fmt:v=>pc(v),bold:true,color:(r,i)=>CORES_RPM[i]});
+
+/* RPM por frente (barras empilhadas) e top 10 em excesso */
+(()=>{const cores=CORES_RPM;const nomes=['1-900','901-1.650','1.651-1.800','1.801-2.000','Acima de 2.000'];
+ const box=document.getElementById('c-rpmfr');const W=400,rh=34,lw=62,H=D.rpm_frente.length*rh+4;const s=svg(box,W,H);const bw=W-lw-8;
+ D.rpm_frente.forEach((r,i)=>{const y=i*rh+4;let x=lw;el('text',{x:lw-8,y:y+rh/2+2,'text-anchor':'end','font-size':12},s,r.l);
+  for(let k=0;k<5;k++){const v=r['b'+k],w=bw*v;const rc=el('rect',{x,y,width:w,height:rh-10,fill:cores[k]},s);hover(rc,box,`${r.l} · ${nomes[k]}: ${pc(v,1)}`);
+   if(w>30)el('text',{x:x+w/2,y:y+(rh-10)/2+4,'text-anchor':'middle','font-size':11,'font-weight':700,style:'fill:'+(k===2||k===3?'#1d2433':'#fff')},s,NF(0)(v*100)+'%');x+=w}});
+ document.getElementById('leg-rpm').innerHTML=nomes.map((n,k)=>`<span><i style="background:${cores[k]}"></i>${n}</span>`).join('');
+ document.getElementById('leg-rpm').style.flexWrap='wrap';
+ hbars('c-rpmtop',D.rpm_top.map(r=>({l:r.l,v:r.v,h:r.h})),{w:400,vw:62,lw:56,rh:22,fmt:v=>pc(v,1),bold:true,color:()=>'#d64550'});
+})();
+/* motivos e turno */
+hbars('c-motivo',D.motivo.map(r=>({l:r.l.replace('Abastecimento De Combustivel - Campo','Abastecimento Campo').replace('Aguardando Manobra Transbordo','Aguard. Manobra Transb.').replace('Manutencao','Manutenção'),v:r.v})),{w:400,vw:46,lw:178,fmt:f1,bold:true,fs:11,color:r=>r.l==='Aguardando Transbordo'||r.l==='Sem Apontamento'?'#d64550':'#22378c'});
 rosca('c-turno',D.oc_turno);
-const XC=['#f0a04b','#e06a2c','#c62828'];
-vbars('c-excfx',D.exc_fx.map(r=>({l:r.l.replace('Acima de 2.100','Acima de\n2.100'),v:r.h})),{w:320,h:170,fmt:f1,bw:46,bot:44,color:(r,i)=>XC[i]});
-document.getElementById('exc-ev').innerHTML=D.exc_fx.map((r,i)=>`<span><i style="background:${XC[i]}"></i>${f0(r.ev)} eventos</span>`).join('');
-hbars('c-exctop',D.exc_top,{w:300,vw:46,fmt:f1,lw:52,color:()=>'#c62828'});
-hbars('c-excest',D.exc_estado,{w:300,vw:46,lw:120,fmt:f1,fs:11,color:()=>'#22378c'});
-linha('c-excdia',D.exc_dia,K.exc_pct,{w:1200,h:110,fmt:v=>NF(0)(v*100)+'%',lo:0,hi:1.3,area:true});
-rosca('c-excturno',D.exc_turno);
+
 (D.notas||[]).forEach(t=>{const li=document.createElement('li');li.textContent=t;document.getElementById('notas').appendChild(li)});
 </script>
+
+
 <div class="assinatura-jv" style="text-align:center;font-size:12px;line-height:1.4;opacity:.6;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px))">Desenvolvido por João Vitor - CRV</div>
 </body></html>
