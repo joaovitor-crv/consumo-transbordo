@@ -13,7 +13,8 @@ Painel de consumo dos transbordos: L/h por modelo (meta do indicador), L/t, moto
 - Meta de L/h por modelo, do indicador (6190J e BH 224: 8,00; 7230J/7M230: 9,50). Frente e geral: média das metas ponderada pelas horas.
 - Motor ocioso = PARADA com motor ligado (Sim ou RPM ≥ 700); cada leitura vale até a próxima (máx. 10 min); 90 s descontados de cada parada; basculando não conta. Meta 10%.
 - RPM: transbordo pode rodar até 1.650. Faixas: até 900 (lenta), 901–1.650, 1.651–1.800, 1.801–2.000, acima de 2.000. Excesso = acima de 1.650.
-- Rankings de operador e de excesso de RPM: só com pelo menos 5 h de motor ligado.
+- Ranking de operador: pelo menos 5 h de motor ligado. Ranking de excesso de RPM: pelo menos 20 h.
+- Transbordo com 0 h no indicador e sem monit na semana fica fora da tabela (citado no rodapé).
 - Turnos: A 07–15h, B 15–23h, C 23–07h.
 
 ## Como gerar

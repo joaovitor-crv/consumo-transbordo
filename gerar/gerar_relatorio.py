@@ -23,7 +23,8 @@ AQUI = os.path.dirname(os.path.abspath(__file__))
 CAP = 600          # cada leitura do monit vale no máximo 10 min
 DESCONTO = 90      # segundos descontados de cada parada com motor ligado
 META_LT, META_OC = 1.0, 0.10   # a meta de L/h vem do PDF, por modelo
-MIN_H = 5 * 3600   # mínimo de motor ligado para entrar nos rankings (operador e RPM)
+MIN_H = 5 * 3600   # mínimo de motor ligado para entrar no ranking de operador
+MIN_H_RPM = 20 * 3600  # mínimo de motor ligado para entrar no ranking de excesso de RPM
 ROMANO = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7, "VIII": 8, "IX": 9, "X": 10}
 BANDAS = ["1 - 900 (lenta)", "901 - 1.650", "1.651 - 1.800", "1.801 - 2.000", "Acima de 2.000"]
 EXCESSO = BANDAS[2:]  # transbordo pode rodar até 1.650 RPM
@@ -155,7 +156,7 @@ def calcular(rows, fim_dt):
                 fr=", ".join(sorted(op_f[o])) if len(op_f[o]) <= 3 else f"{len(op_f[o])} transbordos")
            for o in op_l if op_l[o] >= MIN_H]
     ops.sort(key=lambda x: -x["v"])
-    rtop = [dict(l=e, v=sum(v[b] for b in EXCESSO) / sum(v.values())) for e, v in eq_rpm.items() if sum(v.values()) >= MIN_H]
+    rtop = [dict(l=e, v=sum(v[b] for b in EXCESSO) / sum(v.values())) for e, v in eq_rpm.items() if sum(v.values()) >= MIN_H_RPM]
     rtop.sort(key=lambda x: -x["v"])
     lg = sorted((v for v in longas.values() if v["p10"]), key=lambda x: (-x["p10"], -x["h10"]))
     return dict(
@@ -190,11 +191,14 @@ def main():
     fora_fr = sorted(eq for eq, g in fora if g in {f"FRENTE {f}" for f in frentes})
     M = calcular(rows, fim_dt)
 
-    tab, fr, sem = [], [], []
+    tab, fr, sem, parados = [], [], [], []
     for f in frentes:
         linhas = []
         for x in grupos[f]:
             m = M["F"].get(str(x["frota"]))
+            if not m and not x["horas"]:
+                parados.append(str(x["frota"]))  # 0 h no indicador e sem monit: não entra na tabela
+                continue
             if not m:
                 sem.append(str(x["frota"]))
             linhas.append(dict(x, pct=m["pct"] if m else None, paradas=m["paradas"] if m else None))
@@ -222,6 +226,7 @@ def main():
             f"Motor ocioso, paradas, RPM, motivos, turnos e operadores: monit de {ini[:5]} a {fim}."
             + (f" Sem telemetria nesse período: {', '.join(sem)} ({'aparece' if len(sem) == 1 else 'aparecem'} na tabela só com os dados de consumo)." if sem else ""),
             *([f"Atenção: segundo o indicador, o abastecimento é lançado à mão e está integrado só até {totais['aviso_ate']}; o diesel da semana depois dessa data pode estar incompleto."] if totais.get("aviso_ate") else []),
+            *([f"Sem horas no indicador e sem monit na semana (fora da tabela): {', '.join(parados)}."] if parados else []),
             *([f"No monit nas frentes {nf}, mas sem lançamento nessas frentes no indicador (não entram): {', '.join(fora_fr)}."] if fora_fr else []),
             f"Motor ocioso descontando 90 s de cada parada: {br(t['paradas'], 0)} paradas com motor ligado; "
             f"{br(t['paradas'] - t['paradas_90'], 0)} duraram até 90 s e não contam. Sem o desconto seriam {br(t['oc_bruto'], 1)} h; "

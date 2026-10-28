@@ -8,6 +8,7 @@ python3 gerar/gerar_relatorio.py --pdf <INDICADOR_TRANSBORDOS.pdf> --monit <MONI
   - motor ocioso: todo o tempo em PARADA com motor ligado conta (basculando não conta), descontando 90 s de cada parada, igual às colhedoras;
   - meta de L/h por modelo, lida do PDF (frente e geral = média ponderada pelas horas);
   - faixas de RPM: até 900, 901–1.650, 1.651–1.800, 1.801–2.000, acima de 2.000; excesso = acima de 1.650 (faixas "para teste", combinadas em 28/10/2026);
+  - ranking de excesso de RPM só com pelo menos 20 h de motor ligado; transbordo com 0 h no indicador e sem monit fica fora da tabela;
   - cores de RPM: verde (lenta), azul (901–1.650), amarelo pastel, laranja pastel, vermelho (acima de 2.000).
 - Frentes padrão: 1, 2 e 3. Assinatura: "Desenvolvido por João Vitor - CRV".
 - Depois de mudar `gerar/modelo.html` ou `gerar/gerar_relatorio.py`, regenere, confira no navegador e faça commit e push.
