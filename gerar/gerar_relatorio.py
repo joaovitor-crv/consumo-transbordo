@@ -6,6 +6,9 @@ Uso:
 - Consumo (horas, diesel, L/h, toneladas, L/t): coluna SEMANA do PDF
   "Indicador Consumo de Combustível — Tratores Transbordo". O período do relatório é o da SEMANA.
 - Motor ocioso, paradas, RPM, motivos, turnos e operadores: exportação do monit (CSV com ';').
+- Comparação com a semana anterior: a página da semana anterior já gerada (semana-*.html desta pasta), ou --anterior.
+- Cada execução salva a semana em semana-AAAA-MM-DD_AAAA-MM-DD.html, refaz semanas.js (seletor do topo)
+  e copia a semana mais recente para index.html.
 - Requer pdftotext (poppler-utils).
 
 Desenvolvido por João Vitor - CRV
@@ -16,6 +19,7 @@ import csv
 import json
 import os
 import re
+import shutil
 import subprocess
 from datetime import datetime, timedelta
 
@@ -137,6 +141,20 @@ def detalhe(ep_l, ep_o, ep_x, ep_m):
     return {eq: sorted(L, key=lambda r: -r["lig"]) for eq, L in det.items()}
 
 
+def rpm_frente_op(fo_b, fo_e):
+    """Por frente: operadores com o tempo em cada faixa de RPM e os tratores (para o clique no gráfico por frente)."""
+    out = collections.defaultdict(list)
+    for (g, op), b in fo_b.items():
+        lig = sum(b.values())
+        if lig < 3600:  # menos de 1 h de motor ligado na frente: não entra
+            continue
+        maq = sorted(((eq, h) for eq, h in fo_e[(g, op)].items() if h >= 900), key=lambda m: -m[1])
+        out[g.title()].append(dict(op=op, lig=round(lig / 3600, 4), b=[round(b[k] / 3600, 4) for k in BANDAS],
+                                   maq=[eq for eq, _ in maq]))
+    exc = lambda r: sum(r["b"][BANDAS.index(EXCESSO[0]):]) / r["lig"]
+    return {g: sorted(L, key=lambda r: -exc(r)) for g, L in out.items()}
+
+
 def calcular(rows, fim_dt):
     F = {}
     lig_d = collections.defaultdict(float); oc_d = collections.defaultdict(float)
@@ -147,6 +165,8 @@ def calcular(rows, fim_dt):
     op_rpm = collections.defaultdict(lambda: collections.defaultdict(float))
     ep_l = collections.defaultdict(float); ep_o = collections.defaultdict(float); ep_x = collections.defaultdict(float)
     ep_m = collections.defaultdict(lambda: collections.defaultdict(float))  # ocioso por trator, operador e motivo
+    fo_b = collections.defaultdict(lambda: collections.defaultdict(float))  # RPM por frente e operador (faixas)
+    fo_e = collections.defaultdict(lambda: collections.defaultdict(float))  # motor ligado por frente, operador e trator
     longas = {}
     tot = dict(paradas=0, paradas_90=0, oc_bruto=0.0)
     for eq, L in rows.items():
@@ -162,6 +182,7 @@ def calcular(rows, fim_dt):
                 eq_rpm[eq][banda(x["rpm"])] += x["d"]
                 op_l[x["oper"]] += x["d"]; op_f[x["oper"]].add(eq); op_rpm[x["oper"]][banda(x["rpm"])] += x["d"]
                 ep_l[(eq, x["oper"])] += x["d"]
+                fo_b[(x["g"], x["oper"])][banda(x["rpm"])] += x["d"]; fo_e[(x["g"], x["oper"])][eq] += x["d"]
                 if banda(x["rpm"]) in EXCESSO: ep_x[(eq, x["oper"])] += x["d"]
         i = 0
         while i < len(L):  # paradas com motor ligado
@@ -189,7 +210,8 @@ def calcular(rows, fim_dt):
 
     def maquinas(o):
         """Tratores e frentes em que o operador trabalhou, do que teve mais horas de motor ligado para o que teve menos."""
-        m = [dict(eq=eq, fr=eq_g.get(eq, "").replace("FRENTE ", "F"), h=h / 3600) for (eq, op), h in ep_l.items() if op == o and h >= 900]
+        m = [dict(eq=eq, fr=eq_g.get(eq, "").replace("FRENTE ", "F"), h=h / 3600, x=ep_x[(eq, op)] / 3600, o=ep_o[(eq, op)] / 3600)
+             for (eq, op), h in ep_l.items() if op == o and h >= 900]
         return sorted(m, key=lambda r: -r["h"])
 
     ops = [dict(l=o, v=op_o[o] / op_l[o], lig=op_l[o] / 3600, oc=op_o[o] / 3600, maq=maquinas(o),
@@ -211,6 +233,8 @@ def calcular(rows, fim_dt):
         rpm=[dict(l=b, v=rpm_b[b] / tl) for b in BANDAS],
         rpm_frente=[dict(l=g.title(), **{f"b{i}": fr_rpm[g][b] / (sum(fr_rpm[g].values()) or 1) for i, b in enumerate(BANDAS)})
                     for g in sorted(fr_rpm, key=lambda s: int(s.split()[-1]))],
+        rpm_frente_op=rpm_frente_op(fo_b, fo_e),
+        op_maq={o: maquinas(o) for o in op_l if op_l[o] >= 900},  # clique em qualquer operador
         rpm_top=rtop[:10],
         rpm_op=otop[:10],
         det=detalhe(ep_l, ep_o, ep_x, ep_m),
@@ -223,12 +247,50 @@ def calcular(rows, fim_dt):
                  oc_bruto=tot["oc_bruto"] / 3600, paradas=tot["paradas"], paradas_90=tot["paradas_90"]))
 
 
+def anterior_de(pagina):
+    """Semana anterior a partir da página dela (semana-*.html): consumo, ocioso e RPM, para comparar."""
+    h = open(pagina, encoding="utf-8").read()
+    m = re.search(r"const D=(\{.*?\});\n", h)
+    if not m:
+        return None
+    P = json.loads(m.group(1)); K = P["K"]
+    ini, fim = [x.strip() for x in P["periodo"].split(" - ")]
+    exc = BANDAS.index(EXCESSO[0])
+    return dict(periodo=f"{ini[:5]} a {fim[:5]}",
+                K=dict(litros=K["litros"], horas=K["horas"], ton=K["ton"], lh=K["lh"], lt=K["lt"]),
+                frentes=[dict(l=x["l"], lh=x.get("lh"), lt=x.get("lt")) for x in P["frentes"]],
+                frota={str(x["frota"]): x.get("lh") for g in P["tabela"] for x in g["linhas"]},
+                horas_oc=K.get("horas_oc"), pct_oc=K.get("pct_oc"),
+                rpm_exc=sum(r["v"] for r in P["rpm"][exc:]),
+                rpm_frente={r["l"]: sum(r.get(f"b{i}", 0) for i in range(exc, len(BANDAS))) for r in P["rpm_frente"]},
+                oc={str(r["l"]): r["v"] for r in P["oc_frota"]})
+
+
+def pagina_semana(ini, fim):
+    """Nome do arquivo da semana: semana-AAAA-MM-DD_AAAA-MM-DD.html."""
+    iso = lambda d: datetime.strptime(d, "%d/%m/%Y").strftime("%Y-%m-%d")
+    return f"semana-{iso(ini)}_{iso(fim)}.html"
+
+
+def atualizar_semanas(pasta):
+    """Refaz semanas.js (lista de semanas para o seletor do topo) a partir das páginas semana-*.html; devolve a mais recente."""
+    arqs = sorted(f for f in os.listdir(pasta) if re.fullmatch(r"semana-\d{4}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2}\.html", f))
+    br_ = lambda iso: f"{iso[8:10]}/{iso[5:7]}/{iso[:4]}"
+    L = [dict(arq=f, ini=f[7:17], fim=f[18:28], rotulo=f"{br_(f[7:17])} a {br_(f[18:28])}") for f in arqs]
+    with open(os.path.join(pasta, "semanas.js"), "w", encoding="utf-8") as fh:
+        fh.write("// Gerado por gerar/gerar_relatorio.py: semanas disponíveis no seletor do topo (mais recente primeiro).\n")
+        fh.write("window.SEMANAS = " + json.dumps(L[::-1], ensure_ascii=False, indent=1) + ";\n")
+    return arqs[-1]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pdf", required=True)
     ap.add_argument("--monit", required=True, nargs="+")
     ap.add_argument("--frentes", default="1,2,3,5,6")
-    ap.add_argument("--saida", default=os.path.join(AQUI, "..", "index.html"))
+    ap.add_argument("--saida", default=os.path.join(AQUI, "..", "index.html"),
+                    help="página inicial; cada semana também vira semana-AAAA-MM-DD_AAAA-MM-DD.html na mesma pasta")
+    ap.add_argument("--anterior", help="página da semana anterior para comparar (padrão: a semana-*.html anterior a esta na pasta)")
     a = ap.parse_args()
     frentes = [int(x) for x in a.frentes.split(",")]
 
@@ -259,15 +321,22 @@ def main():
         fr.append(dict(l=f"Frente {f}", **T))
     TL = sum(x["litros"] for x in fr); TH = sum(x["horas"] for x in fr); TT = sum(x["ton"] for x in fr)
     t = M["tot"]
+    pasta = os.path.dirname(os.path.abspath(a.saida))
+    semana = pagina_semana(ini, fim)
+    ant_arq = a.anterior
+    if not ant_arq:  # a semana já gerada imediatamente antes desta
+        antes = sorted(f for f in os.listdir(pasta) if re.fullmatch(r"semana-\d{4}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2}\.html", f) and f < semana)
+        ant_arq = os.path.join(pasta, antes[-1]) if antes else None
+    ant = anterior_de(ant_arq) if ant_arq else None
     nf = ", ".join(map(str, frentes[:-1])) + (" e " if len(frentes) > 1 else "") + str(frentes[-1])
     D = dict(
-        periodo=f"{ini} - {fim}",
+        periodo=f"{ini} - {fim}", semana=semana, exc_i=BANDAS.index(EXCESSO[0]), ant=ant,
         K=dict(litros=TL, frotas=sum(1 for g in tab for x in g["linhas"] if x["horas"] or x["pct"] is not None), ton=TT,
                lt=TL / TT if TT else 0, meta=META_LT, horas=TH, lh=TL / TH if TH else 0,
                meta_lh=sum(x["meta"] * x["horas"] for x in fr) / TH if TH else 0, horas_oc=t["oc"], horas_oc_bruto=t["oc_bruto"],
                paradas=t["paradas"], paradas_90=t["paradas_90"], pct_oc=t["oc"] / t["lig"] if t["lig"] else 0),
         tabela=tab, frentes=fr, meta_oc=META_OC, sem_monit=sem_monit,
-        **{k: M[k] for k in ["oc_frota", "oc_top", "oc_dia", "rpm", "rpm_frente", "rpm_top", "rpm_op", "det", "motivo", "outros", "oc_turno", "oc_op", "longas"]},
+        **{k: M[k] for k in ["oc_frota", "oc_top", "oc_dia", "rpm", "rpm_frente", "rpm_top", "rpm_op", "det", "motivo", "outros", "oc_turno", "oc_op", "longas", "rpm_frente_op", "op_maq"]},
         notas=[
             f"Litros, horas, toneladas, L/h e L/t: coluna SEMANA ({ini[:5]} a {fim}) do Indicador de Consumo de Combustível — Tratores Transbordo"
             + (f", atualizado em {atualizado}" if atualizado else "") + f". Frentes {nf}.",
@@ -282,7 +351,10 @@ def main():
         ])
     html = open(os.path.join(AQUI, "modelo.html"), encoding="utf-8").read()
     html = html.replace("__DADOS__", json.dumps(D, ensure_ascii=False)).replace("__FRENTES__", f"Frentes {nf}")
-    open(a.saida, "w", encoding="utf-8").write(html)
+    open(os.path.join(pasta, semana), "w", encoding="utf-8").write(html)
+    inicial = atualizar_semanas(pasta)
+    shutil.copyfile(os.path.join(pasta, inicial), a.saida)  # a página inicial é sempre a semana mais recente
+    print(f"Semana salva em {semana}; página inicial = {inicial}" + (f"; comparada com {os.path.basename(ant_arq)}" if ant else ""))
     print(f"Relatório gerado: {ini} a {fim} · frentes {nf} · {D['K']['frotas']} transbordos · "
           f"{br(TL, 0)} L · {br(TT, 0)} t · {br(D['K']['lh'], 2)} L/h · ocioso {br(t['oc'], 1)} h ({br(D['K']['pct_oc'] * 100, 1)}%)")
     if sem:

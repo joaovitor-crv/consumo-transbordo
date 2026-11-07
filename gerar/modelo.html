@@ -1,4 +1,19 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}/* impressão / Baixar PDF: o painel inteiro numa folha A3 em pé, com o layout de 3 colunas da tela e as cores mantidas */
+@page{size:A3 portrait;margin:6mm}
+@media print{
+ html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:var(--bg,#eef0f4)!important}
+ body{width:1600px!important;zoom:.665}
+ .btn-pdf,.dlg,.sel-semana{display:none!important}
+ .top{grid-template-columns:auto 1fr!important}
+ .kpis{grid-template-columns:repeat(7,minmax(0,1fr))!important}
+ .grid{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) minmax(0,.82fr)!important}
+ .grid .col:last-child{display:flex!important;grid-column:auto!important}
+ .split{grid-template-columns:minmax(0,.55fr) minmax(0,1fr)!important}
+ .tw{max-height:none!important;overflow:visible!important}
+ .tv th{position:static!important}
+ .card{box-shadow:none!important}
+}
+</style></head><body>
 <title>Consumo Combustível Transbordos CRV</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
@@ -20,6 +35,11 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font)}
 .hdr{display:flex;flex-direction:column;gap:6px;min-width:0}
 .hdr-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .hdr h1{margin:0;color:var(--navy);font-size:13px;font-weight:700;letter-spacing:.01em;text-transform:uppercase}
+.hdr-acoes{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sel-semana{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--navy)}
+.sel-semana select{font:600 12px var(--font);color:var(--ink);border:1px solid var(--navy);border-radius:4px;padding:3px 6px;background:#fff;cursor:pointer}
+.btn-pdf{background:var(--navy);color:#fff;border:0;border-radius:4px;font:700 12px var(--font);padding:4px 12px;cursor:pointer}
+.btn-pdf:hover{background:#2a44a8}.btn-pdf:focus-visible{outline:2px solid #2a44a8;outline-offset:2px}
 .periodo{background:#111;color:#fff;font-weight:700;font-style:italic;font-size:12px;padding:3px 16px;border-radius:4px;white-space:nowrap}
 .kpis{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
 .kpi{background:var(--card);border-radius:8px;display:flex;align-items:center;gap:8px;padding:6px 8px;min-width:0;box-shadow:0 1px 2px rgba(20,30,60,.06)}
@@ -27,6 +47,11 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font)}
 .kpi div{display:flex;flex-direction:column;align-items:center;flex:1;min-width:0;text-align:center}
 .kpi .v{font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap;font-variant-numeric:tabular-nums}
 .kpi .l{font-size:12px;font-weight:600;color:var(--navy);white-space:nowrap}
+.kpi .a{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;font-variant-numeric:tabular-nums}
+.kpi .a b{font-weight:700}.kpi .a .up{color:var(--red)}.kpi .a .dn{color:var(--green)}
+.cmp{margin:2px 0 6px;font-size:12px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}.cmp b{color:var(--ink)}.cmp .up{color:var(--red);font-weight:700}.cmp .dn{color:var(--green);font-weight:700}
+.tv.cmpx td,.tv.cmpx th{padding-left:3px;padding-right:3px}.tv.cmpx td:first-child{padding-left:10px}
+.tv td.dv{font-size:10.5px;font-weight:700;padding:2px 3px}.tv th#th-ant{font-size:10.5px;padding:8px 2px;line-height:1.15}.tv td.dv.up{color:var(--red)}.tv td.dv.dn{color:var(--green)}
 .kpi .v.gray{color:var(--gray)} .kpi .v.green{color:var(--green)} .kpi .v.red{color:var(--red)}
 .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) minmax(0,.82fr);gap:10px;align-items:start}
 .col{display:flex;flex-direction:column;gap:10px;min-width:0}
@@ -61,7 +86,7 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .foot ul{margin:4px 0 0;padding-left:18px;display:grid;gap:2px}
 .dica{text-align:center;margin:0 0 4px;color:var(--navy);font-weight:600}
 .dlg{position:fixed;inset:0;background:rgba(20,30,60,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
-.dlg-c{background:#fff;border-radius:12px;max-width:760px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.dlg-c{background:#fff;border-radius:12px;max-width:900px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,.25)}
 .dlg-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;background:var(--navy);color:#fff;padding:10px 14px;position:sticky;top:0}
 .dlg-h b{display:block;font-size:14px}.dlg-h small{font-size:12px;opacity:.85}
 .dlg-h button{background:transparent;border:1px solid rgba(255,255,255,.6);color:#fff;border-radius:6px;font-size:14px;padding:2px 10px;cursor:pointer}
@@ -73,6 +98,7 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .lk{color:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer}.lk:hover{color:var(--navy-2)}
 #dlg-v{margin:4px 0 6px;background:#fff;border:1px solid var(--navy);color:var(--navy);border-radius:6px;font:600 12px var(--font);padding:4px 10px;cursor:pointer}
 .mb{display:block;height:5px;background:#eef0f4;border-radius:3px;margin-top:2px;min-width:70px}.mb i{display:block;height:5px;border-radius:3px}
+.frops{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}.frops td{padding:4px 2px;border-bottom:1px solid #eef0f4;vertical-align:top}.frops td:first-child{white-space:nowrap;padding-right:8px}.frops a{color:#2a44a8;font-weight:600}.frops b{color:#d64550}.frops .op{white-space:nowrap}
 .tip{position:absolute;pointer-events:none;background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.12);padding:4px 8px;font-size:12px;white-space:nowrap;z-index:5}
 @media (max-width:1250px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.grid .col:last-child{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
 @media (max-width:820px){.top{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.grid,.grid .col:last-child{grid-template-columns:minmax(0,1fr);display:grid}.split{grid-template-columns:minmax(0,1fr)}}
@@ -82,7 +108,7 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
   <div class="top">
     <div class="logo"><img class="logo-img" src="logo-crv.png" alt="CRV Industrial — Açúcar, Etanol e Energia"></div>
     <div class="hdr">
-      <div class="hdr-row"><h1>Acompanhamento consumo de combustível - transbordos</h1><span class="periodo" id="periodo"></span></div>
+      <div class="hdr-row"><h1>Acompanhamento consumo de combustível - transbordos</h1><span class="hdr-acoes"><label class="sel-semana" id="sel-semana-box" hidden>Semana <select id="sel-semana"></select></label><button type="button" id="btn-pdf" class="btn-pdf" title="Abre a impressão: escolha Salvar como PDF">Baixar PDF</button><span class="periodo" id="periodo"></span></span></div>
       <div class="kpis" id="kpis"></div>
     </div>
   </div>
@@ -90,7 +116,7 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
   <div class="grid">
     <div class="col">
       <section class="card"><h2>Acompanhamento por transbordo</h2>
-        <div class="tw"><table class="tv"><thead><tr><th>Frotas</th><th>Litros</th><th>Horas</th><th>L/h</th><th>Meta L/h</th><th>Toneladas</th><th>L/t</th><th>% Ocioso</th><th>Paradas</th></tr></thead><tbody id="tab"></tbody></table></div>
+        <div class="tw"><table class="tv"><thead><tr><th>Frotas</th><th>Litros</th><th>Horas</th><th>L/h</th><th id="th-ant" hidden>vs sem. ant.</th><th>Meta L/h</th><th>Toneladas</th><th>L/t</th><th>% Ocioso</th><th>Paradas</th></tr></thead><tbody id="tab"></tbody></table></div>
       </section>
       <section class="card"><h2>Motor ocioso por motivo (horas)</h2>
         <div class="cb">
@@ -105,7 +131,7 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
     <div class="col">
       <section class="card"><h2>Registros de motor ocioso</h2>
         <div class="cb">
-          <h3 class="sub" style="margin-top:2px">% de motor ocioso por transbordo (meta 10%)</h3><p class="note dica">Clique num transbordo para ver os operadores.</p>
+          <h3 class="sub" style="margin-top:2px">% de motor ocioso por transbordo (meta 10%)</h3><p class="cmp" id="cmp-oc" hidden></p><p class="note dica">Clique num transbordo para ver os operadores.</p>
           <div class="chart" id="c-ocfx"></div>
           <div class="split">
             <div><h3 class="sub" style="margin-top:0">Horas ociosas (top 10)</h3><div class="chart" id="c-octop"></div></div>
@@ -118,22 +144,22 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
         </div>
       </section>
       <section class="card"><h2>Motor ocioso por operador</h2>
-        <div class="cb"><div class="chart" id="c-op"></div><p class="note">Os 10 operadores com maior % de motor ocioso, entre os que tiveram pelo menos 5 h de motor ligado na semana. Ao lado do nome: frente e transbordo em que mais trabalhou (+N = outros transbordos; <b>clique no operador com +N para ver todos</b>). Vermelho: acima da meta de 10%.</p></div>
+        <div class="cb"><div class="chart" id="c-op"></div><p class="note">Os 10 operadores com maior % de motor ocioso, entre os que tiveram pelo menos 5 h de motor ligado na semana. Ao lado do nome: frente e transbordo em que mais trabalhou (+N = outros transbordos; <b>clique no operador com +N para ver todas</b>). Vermelho: acima da meta de 10%.</p></div>
       </section>
       <section class="card"><h3>Litros por hora por frente</h3>
-        <div class="cb"><div class="leg"><span><i style="background:var(--green)"></i>Dentro da meta</span><span><i style="background:var(--red)"></i>Acima da meta</span></div><div class="chart" id="c-lh"></div></div>
+        <div class="cb"><div class="leg"><span class="leg-ant" hidden><i style="background:#c3c8d4"></i><span class="per-ant"></span></span><span><i style="background:var(--green)"></i>Dentro da meta</span><span><i style="background:var(--red)"></i>Acima da meta</span></div><div class="chart" id="c-lh"></div></div>
       </section>
       <section class="card"><h3>Litros por tonelada por frente</h3>
-        <div class="cb"><div class="chart" id="c-lt"></div></div>
+        <div class="cb"><div class="leg leg-ant" hidden><span><i style="background:#c3c8d4"></i><span class="per-ant"></span></span><span><i style="background:#22378c"></i>Semana atual</span></div><div class="chart" id="c-lt"></div></div>
       </section>
     </div>
 
     <div class="col">
       <section class="card"><h3>Faixa de RPM do motor</h3>
-        <div class="cb"><div class="chart" id="c-rpm"></div>
+        <div class="cb"><div class="chart" id="c-rpm"></div><p class="cmp" id="cmp-rpm" hidden></p>
           <h3 class="sub">Faixa de RPM por frente</h3>
           <div class="chart" id="c-rpmfr"></div>
-          <div class="leg" id="leg-rpm"></div>
+          <div class="leg" id="leg-rpm"></div><h3 class="sub">Operadores acima de 1.650 RPM por frente</h3><div id="fr-ops"></div><p class="note" style="text-align:center">Os 3 operadores de cada frente com mais tempo acima de 1.650 RPM (% do tempo de motor ligado). Clique na frente para ver todos.</p>
           <h3 class="sub">Top 10 transbordos em excesso de RPM (acima de 1.650)</h3>
           <div class="chart" id="c-rpmtop"></div>
           <p class="note">% do tempo de motor ligado acima de 1.650 RPM (limite do transbordo). Entram transbordos com pelo menos 20 h de motor ligado na semana. <b>Clique num transbordo para ver os operadores.</b></p>
@@ -141,7 +167,7 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
       </section>
       <section class="card"><h3>Top 10 operadores em excesso de RPM (acima de 1.650)</h3>
         <div class="cb"><div class="chart" id="c-rpmop"></div>
-          <p class="note">% do tempo de motor ligado acima de 1.650 RPM, pelo operador registrado no monit. Entram operadores com pelo menos 20 h de motor ligado na semana. <b>Clique no operador com +N para ver os outros transbordos.</b></p></div>
+          <p class="note">% do tempo de motor ligado acima de 1.650 RPM, pelo operador registrado no monit. Entram operadores com pelo menos 20 h de motor ligado na semana. <b>Clique no operador para ver os transbordos, o motor ocioso e o RPM.</b></p></div>
       </section>
       <section class="card" id="card-sem" hidden><h3>Com abastecimento, sem dados no Solinftec <span id="sem-n"></span></h3>
         <div class="cb"><div class="to-wrap"><table class="to"><thead><tr><th>Frota</th><th>Frente</th><th>Litros</th><th>Horas</th><th>L/h</th></tr></thead><tbody id="t-sem"></tbody></table></div>
@@ -173,6 +199,7 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
   </div>
 </div>
 
+<script src="semanas.js"></script>
 <script>
 const D=__DADOS__;
 const NF=d=>new Intl.NumberFormat('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}).format;
@@ -198,21 +225,41 @@ const IC={
  dinheiro:'<g transform="rotate(-25 15 15)"><rect x="3" y="9" width="22" height="13" rx="2" fill="#3aa35a"/><circle cx="14" cy="15.5" r="3.5" fill="#bfe8c9"/></g><circle cx="22" cy="22" r="5" fill="#f2c230"/>'
 };
 const K=D.K;
+/* excesso de RPM: faixas a partir de D.exc_i (transbordo: acima de 1.650) */
+const EXI=D.exc_i??5,bsum=b=>b.slice(EXI).reduce((a,v)=>a+v,0),fxr=r=>(D.rpm||[]).reduce((a,_,k)=>k>=EXI?a+(r['b'+k]||0):a,0);
 const kpis=[['bomba',f2(K.litros),'Litros Abast',''],['caminhao',f0(K.frotas),'Transbordos',''],['estrada',f2(K.ton),'Toneladas',''],
  ['relogio',f2(K.lh),'Média L/h',K.lh<=K.meta_lh?'green':'red'],['alvo',f2(K.meta_lh),'Meta L/h (média)','green'],['grafico',f2(K.lt),'Média L/t','gray'],['raio',fh(K.horas_oc)+' h ('+pc(K.pct_oc,1)+')','Motor Ocioso','red']];
-document.getElementById('kpis').innerHTML=kpis.map(([i,v,l,c])=>`<div class="kpi"><svg viewBox="0 0 30 30" aria-hidden="true">${IC[i]}</svg><div><span class="v ${c}">${v}</span><span class="l">${l}</span></div></div>`).join('');
+const A=D.ant,AK=A&&A.K;
+/* variação contra a semana anterior: menor é melhor em L/h, L/t e ocioso; litros e toneladas só mostram a variação */
+const var_=(a,b,menor)=>{if(a==null||b==null||!a)return '';const d=(b-a)/a*100,cl=menor==null||Math.abs(d)<.05?'':((d<0)===menor?'dn':'up');return `<b class="${cl}">${d>0?'▲ +':d<0?'▼ −':''}${f1(Math.abs(d))}%</b>`};
+const antK=AK?{bomba:[f0(AK.litros),var_(AK.litros,K.litros)],estrada:[f0(AK.ton),var_(AK.ton,K.ton)],relogio:[f2(AK.lh),var_(AK.lh,K.lh,true)],grafico:[f2(AK.lt),var_(AK.lt,K.lt,true)],
+ raio:A.pct_oc!=null?[pc(A.pct_oc,1),var_(A.pct_oc,K.pct_oc,true)]:null}:{};
+document.getElementById('kpis').innerHTML=kpis.map(([i,v,l,c])=>`<div class="kpi"><svg viewBox="0 0 30 30" aria-hidden="true">${IC[i]}</svg><div><span class="v ${c}">${v}</span><span class="l">${l}</span>${antK[i]?`<span class="a" title="Semana ${A.periodo}: ${antK[i][0]}">ant. ${antK[i][0]} ${antK[i][1]}</span>`:''}</div></div>`).join('');
 document.getElementById('periodo').textContent='PERÍODO '+D.periodo;
+/* seletor de semana: cada semana é uma página semana-*.html; a lista vem de semanas.js */
+(()=>{const L=window.SEMANAS||[];if(L.length<2)return;const sel=document.getElementById('sel-semana');
+ sel.innerHTML=L.map((s,i)=>`<option value="${s.arq}">${s.rotulo}${i===0?' (mais recente)':''}</option>`).join('');
+ sel.value=D.semana;if(sel.value!==D.semana)sel.selectedIndex=0;document.getElementById('sel-semana-box').hidden=false;
+ sel.addEventListener('change',()=>{location.href=sel.selectedIndex===0?'index.html':sel.value});})();
+/* Baixar PDF: usa a impressão do navegador; o nome sugerido do arquivo leva o período */
+(()=>{const t0=document.title,nome='Consumo transbordos '+D.periodo.replace(/\/\d{4}/g,'').replace(/\//g,'-').replace(' - ',' a ');
+ addEventListener('beforeprint',()=>{document.title=nome});addEventListener('afterprint',()=>{document.title=t0});
+ document.getElementById('btn-pdf').addEventListener('click',()=>window.print());})();
+document.querySelectorAll('.meta-lh').forEach(e=>e.textContent=f2(K.meta_lh));
 
 /* tabela */
 const kc=v=>v==null?'':(v<=K.meta?'kgn':(v<=1.15?'kg':(v<=1.5?'ky':'kr')));
 const tb=document.getElementById('tab');
-D.tabela.forEach(g=>{const r=tb.insertRow();r.className='g';const c=r.insertCell();c.colSpan=9;c.textContent=g.grupo;
+/* célula da variação de L/h contra a semana anterior (diferença em L/h) */
+const dvc=(a,b)=>{if(a==null||b==null)return ['',''];const d=b-a;if(Math.abs(d)<.005)return ['=','dv'];return [(d<0?'▼':'▲')+f2(Math.abs(d)),'dv '+(d<0?'dn':'up')]};
+if(A){tb.closest('table').classList.add('cmpx');document.getElementById('th-ant').hidden=false;document.getElementById('th-ant').innerHTML='vs<br>'+A.periodo.replace(' a ','–')}
+D.tabela.forEach(g=>{const r=tb.insertRow();r.className='g';const c=r.insertCell();c.colSpan=A?10:9;c.textContent=g.grupo;
  g.linhas.forEach(x=>{const tr=tb.insertRow();const z=v=>v==null||v===0;
-  [[String(x.frota),''],[z(x.litros)?'':f0(x.litros),'i'],[z(x.horas)?'-':fh(x.horas),''],[x.lh==null?'':f2(x.lh),'i lh '+(x.lh<=x.meta?'kgn':'kr')],[f2(x.meta),'meta'],
+  [[String(x.frota),''],[z(x.litros)?'':f0(x.litros),'i'],[z(x.horas)?'-':fh(x.horas),''],[x.lh==null?'':f2(x.lh),'i lh '+(x.lh<=x.meta?'kgn':'kr')],...(A?[dvc(A.frota[String(x.frota)],x.lh)]:[]),[f2(x.meta),'meta'],
    [x.ton==null?'':f0(x.ton),'ton'],[x.lt==null?'':f2(x.lt),'i'],[x.pct==null?'':pc(x.pct,1),x.pct!=null&&x.pct>D.meta_oc?'kr':''],[x.paradas==null?'':f0(x.paradas),'i']]
   .forEach(([t,cl])=>{const td=tr.insertCell();td.textContent=t;if(cl)td.className=cl})});
  if(g.tot){const T=g.tot,tr=tb.insertRow();tr.className='t';
-  [['Total',''],[f0(T.litros),''],[fh(T.horas),''],[f2(T.lh),'lh '+(T.lh<=T.meta?'kgn':'kr')],[f2(T.meta),'meta'],[f0(T.ton),'ton'],[f2(T.lt),''],['',''],['','']]
+  [['Total',''],[f0(T.litros),''],[fh(T.horas),''],[f2(T.lh),'lh '+(T.lh<=T.meta?'kgn':'kr')],...(A?[dvc((A.frentes.find(f=>f.l===g.grupo.replace('FRENTE','Frente'))||{}).lh,T.lh)]:[]),[f2(T.meta),'meta'],[f0(T.ton),'ton'],[f2(T.lt),''],['',''],['','']]
   .forEach(([t,cl])=>{const td=tr.insertCell();td.textContent=t;if(cl)td.className=cl})}});
 /* barras verticais com rótulo em cima (estilo Power BI) */
 function vbars(id,rows,opt){const box=document.getElementById(id);const W=opt.w||560,H=opt.h||150,top=26,bot=opt.bot||40;
@@ -223,6 +270,14 @@ function vbars(id,rows,opt){const box=document.getElementById(id);const W=opt.w|
   String(r.l).split('\n').forEach((ln,k)=>el('text',{x:cx,y:H-bot+16+k*14,'text-anchor':'middle','font-size':12},s,ln));});
  if(opt.line){const yv=H-bot-(H-top-bot)*opt.line/max;el('line',{x1:slot*.3,x2:W-slot*.3,y1:yv,y2:yv,stroke:'#22378c','stroke-width':3},s)}}
 
+/* barras verticais lado a lado: semana anterior (cinza) e atual */
+function vpar(id,rows,opt){const box=document.getElementById(id);const W=600,H=170,top=30,bot=30;
+ const s=svg(box,W,H);const max=Math.max(...rows.flatMap(r=>[r.a||0,r.v||0]),1);const slot=W/rows.length;const bw=Math.min(40,slot*.32);
+ rows.forEach((r,i)=>{const cx=slot*i+slot/2;[[r.a,'#c3c8d4',cx-bw/2-2,'ant'],[r.v,opt.color(r.v,r),cx+bw/2+2,'atual']].forEach(([v,c,x,k])=>{if(v==null)return;
+   const h=Math.max(2,(H-top-bot)*v/max*.92),y=H-bot-h;const rc=el('rect',{x:x-bw/2,y,width:bw,height:h,fill:c},s);hover(rc,box,`${r.l} · ${k==='ant'?A.periodo:'semana atual'}: ${f2(v)}`);
+   el('text',{x,y:y-6,'text-anchor':'middle','font-size':k==='ant'?11:12.5,'font-weight':k==='ant'?400:700,fill:k==='ant'?'#5b6475':'#1d2433'},s,f2(v))});
+  if(r.a!=null&&r.v!=null){const d=r.v-r.a;el('text',{x:cx,y:H-bot+28,'text-anchor':'middle','font-size':10.5,'font-weight':700,fill:Math.abs(d)<.005?'#5b6475':d<0?'#2e7d32':'#d64550'},s,(d<0?'▼ ':d>0?'▲ +':'')+f2(Math.abs(d)))}
+  el('text',{x:cx,y:H-bot+14,'text-anchor':'middle','font-size':12},s,r.m!=null?r.l+' · meta '+f2(r.m):r.l)})}
 /* barras horizontais com valor à direita */
 function hbars(id,rows,opt){const box=document.getElementById(id);const W=opt.w||300,rh=opt.rh||23,lw=opt.lw||56,H=rows.length*rh+6;
  const s=svg(box,W,H);const max=Math.max(...rows.map(r=>r.v),1e-9);const bwMax=W-lw-opt.vw;
@@ -264,14 +319,14 @@ function meta_bars(id,rows,o){const box=document.getElementById(id);const W=o.w,
   const rc=el('rect',{x:lw,y:y+3,width:w,height:rh-7,fill:r.v>D.meta_oc?'#d64550':'#2e7d32'},s);hover(rc,box,r.t||`${r.l}: ${pc(r.v,1)}`);
   el('text',{x:lw+w+6,y:y+rh/2+4,'font-size':o.fs||12,'font-weight':700},s,pc(r.v,1));
   if(o.click)clicavel(s,box,0,y,W,rh,r,o.click,`${r.l}: ${pc(r.v,1)}`);
-  if(r.onclick){clicavel(s,box,0,y,W,rh,r,()=>r.onclick(),r.t||`${r.l}: ${pc(r.v,1)}`,'clique para ver os outros transbordos')}});
+  if(r.onclick){clicavel(s,box,0,y,W,rh,r,()=>r.onclick(),r.t||`${r.l}: ${pc(r.v,1)}`,r.dica||'clique para ver os outros transbordos')}});
  el('line',{x1:xm,x2:xm,y1:0,y2:rows.length*rh+6,stroke:'#22378c','stroke-width':2,'stroke-dasharray':'5 4'},s);
  el('text',{x:xm,y:rows.length*rh+18,'text-anchor':'middle','font-size':11,'font-weight':700,fill:'#22378c'},s,'meta 10%');}
 /* nome do operador com frente e máquina */
 const nomeCurto=s=>{const w=s.split(' ');return w.length>1?w[0]+' '+w[w.length-1]:w[0]};
 const maqTxt=r=>{const m=r.maq||[];if(!m.length)return '';const p=m[0];return ` · ${p.fr} · ${p.eq}${m.length>1?' +'+(m.length-1):''}`};
 const maqTip=r=>(r.maq||[]).map(m=>`${m.eq} (${m.fr}, ${fh(m.h)} h)`).join(', ');
-/* clique no transbordo: operadores */
+/* clique na transbordo: operadores */
 function clicavel(s,box,x,y,w,h,r,fn,txt,dica){const a=el('rect',{x,y,width:w,height:h,fill:'transparent',style:'cursor:pointer'},s);
  a.addEventListener('click',()=>fn(r.l));const T=tip(box);a.addEventListener('mousemove',e=>T(e,`${txt} · ${dica||'clique para ver os operadores'}`));a.addEventListener('mouseleave',()=>T());}
 const HOP=document.getElementById('dlg-h').innerHTML,NOP=document.getElementById('dlg-n').innerHTML;
@@ -282,19 +337,24 @@ function detalhe(eq,modo){const L=(D.det||{})[eq]||[];const dlg=document.getElem
  const mOc=Math.max(...rows.map(r=>r.poc),D.meta_oc),mX=Math.max(...rows.map(r=>r.px),.01);
  document.getElementById('dlg-t').textContent=`Transbordo ${eq} — operadores`;
  document.getElementById('dlg-s').textContent=(modo==='rpm'?'Ordenado por % do tempo acima de 1.650 RPM':'Ordenado por % de motor ocioso')+(L.some(r=>(r.mot||[]).length)?' · clique no % ocioso para ver os apontamentos':'');
- ULT={eq,modo,rows};
- document.getElementById('dlg-b').innerHTML=rows.length?rows.map((r,i)=>`<tr><td title="${r.op}">${nm(r.op)}</td><td>${fh(r.lig)}</td>
+ ULT={eq,modo,rows};VOLTA=null;CTX=Object.assign(()=>detalhe(eq,modo),{txt:'← Voltar aos operadores do '+eq});
+ document.getElementById('dlg-b').innerHTML=rows.length?rows.map((r,i)=>`<tr><td title="${r.op}">${opLink(r.op,nm(r.op))}</td><td>${fh(r.lig)}</td>
    <td>${fh(r.oc)}</td><td class="${r.poc>D.meta_oc?'kr':'kgn'}">${(r.mot||[]).length?`<a class="lk" href="#" data-i="${i}" title="Ver os apontamentos do motor ocioso">${pc(r.poc,1)}</a>`:pc(r.poc,1)}${barra(r.poc,mOc,r.poc>D.meta_oc?'#d64550':'#2e7d32')}</td>
    <td>${fh(r.x)}</td><td class="${r.px>0?'kr':''}">${pc(r.px,1)}${barra(r.px,mX,'#d64550')}</td></tr>`).join(''):'<tr><td colspan="6">Sem operadores registrados no monit.</td></tr>';
  dlg.hidden=false;document.getElementById('dlg-x').focus();}
-function maquinas(r){const m=[...(r.maq||[])].sort((a,b)=>b.h-a.h);const tot=m.reduce((a,x)=>a+x.h,0)||1;const mx=Math.max(...m.map(x=>x.h),.01);
- document.getElementById('dlg-v').hidden=true;document.getElementById('dlg-t').textContent=`${nomeCurto(r.l)} — transbordos operados`;
- document.getElementById('dlg-s').textContent=r.l;
- document.getElementById('dlg-h').innerHTML='<tr><th>Transbordo</th><th>Frente</th><th>Motor ligado (h)</th><th>% do tempo do operador</th></tr>';
- document.getElementById('dlg-b').innerHTML=m.map((x,i)=>`<tr><td>${x.eq}${i===0?' <small style="color:#5b6475">(principal)</small>':''}</td><td>${x.fr}</td><td>${fh(x.h)}</td><td>${pc(x.h/tot,1)}<span class="mb"><i style="width:${Math.max(2,x.h/mx*100)}%;background:#22378c"></i></span></td></tr>`).join('')
-  +`<tr><td><b>Total</b></td><td></td><td><b>${fh(tot)}</b></td><td></td></tr>`;
- document.getElementById('dlg-n').textContent='Horas de motor ligado do operador em cada transbordo no monit. O primeiro é o que aparece ao lado do nome; os demais formam o +N.';
+function maquinas(nome,volta){const m=[...((D.op_maq||{})[nome]||[])].sort((a,b)=>b.h-a.h);const tot=m.reduce((a,x)=>a+x.h,0)||1;const mx=Math.max(...m.map(x=>x.h),.01);
+ const v1=m.length>1,to=m.reduce((a,x)=>a+(x.o||0),0),tx=m.reduce((a,x)=>a+(x.x||0),0);const co=v=>v>D.meta_oc?'#d64550':'#2e7d32';
+ const bv=document.getElementById('dlg-v');VOLTA=volta||null;bv.hidden=!volta;if(volta)bv.textContent=volta.txt||'← Voltar';
+ document.getElementById('dlg-t').textContent=`${nomeCurto(nome)} — transbordos operados`;
+ document.getElementById('dlg-s').textContent=`${nome} · ${fh(tot)} h de motor ligado · ocioso ${pc(to/tot,1)} · acima de 1.650 RPM ${pc(tx/tot,1)}`;
+ document.getElementById('dlg-h').innerHTML=`<tr><th>Transbordo</th><th>Frente</th><th>Motor ligado (h)</th>${v1?'<th>% do tempo do operador</th>':''}<th>Ocioso (h)</th><th>% ocioso</th><th>Acima 1.650 (h)</th><th>% acima 1.650</th></tr>`;
+ document.getElementById('dlg-b').innerHTML=m.map((x,i)=>`<tr><td>${x.eq}${i===0&&m.length>1?' <small style="color:#5b6475">(principal)</small>':''}</td><td>${x.fr}</td><td>${fh(x.h)}</td>${v1?`<td>${pc(x.h/tot,1)}<span class="mb"><i style="width:${Math.max(2,x.h/mx*100)}%;background:#22378c"></i></span></td>`:''}<td>${fh(x.o||0)}</td><td style="color:${co((x.o||0)/(x.h||1))};font-weight:700">${pc((x.o||0)/(x.h||1),1)}</td><td>${fh(x.x||0)}</td><td style="color:#d64550;font-weight:700">${pc((x.x||0)/(x.h||1),1)}</td></tr>`).join('')
+  +(m.length>1?`<tr><td><b>Total</b></td><td></td><td><b>${fh(tot)}</b></td><td></td><td><b>${fh(to)}</b></td><td style="color:${co(to/tot)};font-weight:700">${pc(to/tot,1)}</td><td><b>${fh(tx)}</b></td><td style="color:#d64550;font-weight:700">${pc(tx/tot,1)}</td></tr>`:'')
+  ||'<tr><td colspan="7">Sem registros desse operador no monit.</td></tr>';
+ document.getElementById('dlg-n').textContent='Horas de motor ligado do operador em cada transbordo no monit e, delas, o motor ocioso (meta 10%; vermelho acima, verde abaixo) e o tempo com o motor acima de 1.650 RPM. Com mais de um transbordo, "% do tempo do operador" mostra como as horas dele se dividem entre eles, e o primeiro é o principal, que aparece ao lado do nome nos rankings.';
  document.getElementById('dlg').hidden=false;document.getElementById('dlg-x').focus();}
+let VOLTA=null,CTX=null;
+const opLink=(op,txt)=>!D.op_maq?txt:`<a href="#" class="lk lk-op" data-op="${encodeURIComponent(op)}" title="Ver transbordos, motor ocioso e RPM de ${op}">${txt}</a>`;
 function outros(){const L=[...(D.outros||[])].sort((a,b)=>b.v-a.v);const tot=L.reduce((a,x)=>a+x.v,0)||1;const all=D.motivo.reduce((a,x)=>a+x.v,0)||1;const mx=Math.max(...L.map(x=>x.v),.01);
  document.getElementById('dlg-v').hidden=true;document.getElementById('dlg-t').textContent='Motor ocioso — motivos dentro de "Outros"';
  document.getElementById('dlg-s').textContent=`${fh(tot)} h ociosas em ${L.length} motivos`;
@@ -311,9 +371,20 @@ function apont(r){const L=r.mot||[];const tot=L.reduce((a,x)=>a+x[1],0)||1;const
  document.getElementById('dlg-b').innerHTML=L.map(([m,v])=>`<tr><td>${m}</td><td>${fh(v)}</td><td>${pc(v/tot,1)}<span class="mb"><i style="width:${Math.max(2,v/mx*100)}%;background:${m==='Sem Apontamento'||m==='Aguardando Transbordo'?'#d64550':'#22378c'}"></i></span></td><td>${pc(r.lig?v/r.lig:0,1)}</td></tr>`).join('')
   +`<tr><td><b>Total</b></td><td><b>${fh(tot)}</b></td><td><b>100,0%</b></td><td><b>${pc(r.poc,1)}</b></td></tr>`;
  document.getElementById('dlg-n').textContent='Motor ocioso (parada com motor ligado, já descontados os 90 s de cada parada) desse operador nesse transbordo, pelo apontamento registrado no monit. A soma de "% do motor ligado" é o % ocioso do operador.';
- document.getElementById('dlg-v').hidden=false;document.getElementById('dlg-v').focus();}
-document.getElementById('dlg-b').addEventListener('click',e=>{const a=e.target.closest('.lk');if(!a||!ULT)return;e.preventDefault();apont(ULT.rows[+a.dataset.i])});
-document.getElementById('dlg-v').addEventListener('click',()=>{if(ULT)detalhe(ULT.eq,ULT.modo)});
+ VOLTA=null;document.getElementById('dlg-v').textContent='← Voltar aos operadores';document.getElementById('dlg-v').hidden=false;document.getElementById('dlg-v').focus();}
+document.getElementById('dlg-b').addEventListener('click',e=>{const o=e.target.closest('[data-op]');if(o){e.preventDefault();maquinas(decodeURIComponent(o.dataset.op),CTX);return}
+ const a=e.target.closest('.lk');if(!a||!ULT)return;e.preventDefault();apont(ULT.rows[+a.dataset.i])});
+document.getElementById('dlg-v').addEventListener('click',()=>{if(VOLTA){const f=VOLTA;VOLTA=null;f()}else if(ULT)detalhe(ULT.eq,ULT.modo)});
+function frenteRpm(fr){const L=(D.rpm_frente_op||{})[fr.l]||[];const ref=fxr(fr);
+ const rows=L.map(r=>({...r,x:bsum(r.b),px:r.lig?bsum(r.b)/r.lig:0}));const mx=Math.max(...rows.map(r=>r.px),.01);
+ document.getElementById('dlg-v').hidden=true;
+ document.getElementById('dlg-t').textContent=`${fr.l} — operadores por excesso de RPM`;VOLTA=null;CTX=Object.assign(()=>frenteRpm(fr),{txt:'← Voltar à '+fr.l});
+ document.getElementById('dlg-s').textContent=`${pc(ref,1)} do tempo da frente acima de 1.650 RPM · ${rows.length} operadores, do que mais passou para o que menos passou`;
+ document.getElementById('dlg-h').innerHTML='<tr><th>Operador</th><th>Transbordo</th><th>Motor ligado (h)</th><th>Acima 1.650 (h)</th><th>% acima 1.650</th><th>Faixas de RPM</th></tr>';
+ const faixas=r=>`<span style="display:flex;width:150px;height:10px;border-radius:3px;overflow:hidden;margin-left:auto">${r.b.map((v,k)=>`<i title="${RPMN[k]}: ${pc(r.lig?v/r.lig:0,1)}" style="display:block;width:${(r.lig?v/r.lig:0)*100}%;background:${RPMC[k]}"></i>`).join('')}</span>`;
+ document.getElementById('dlg-b').innerHTML=rows.map(r=>`<tr><td title="${r.op}">${opLink(r.op,nomeCurto(r.op))}</td><td>${r.maq.join(', ')}</td><td>${fh(r.lig)}</td><td>${fh(r.x)}</td><td class="${r.px>ref?'kr':''}">${pc(r.px,1)}<span class="mb"><i style="width:${Math.max(2,r.px/mx*100)}%;background:#d64550"></i></span></td><td>${faixas(r)}</td></tr>`).join('')||'<tr><td colspan="6">Sem operadores registrados no monit.</td></tr>';
+ document.getElementById('dlg-n').innerHTML=`Operador registrado no monit nessa frente (pelo menos 1 h de motor ligado). Em vermelho: acima da média da frente (${pc(ref,1)}). Faixas: `+RPMN.map((x,k)=>`<span style="white-space:nowrap"><i style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${RPMC[k]};margin:0 3px 0 8px;vertical-align:-1px"></i>${x}</span>`).join('');
+ document.getElementById('dlg').hidden=false;document.getElementById('dlg-x').focus();}
 function fecha(){document.getElementById('dlg').hidden=true}
 document.getElementById('dlg').addEventListener('click',e=>{if(e.target.id==='dlg')fecha()});
 document.getElementById('dlg-x').addEventListener('click',fecha);
@@ -322,12 +393,23 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')fecha()});
 meta_bars('c-ocfx',D.oc_frota,{w:600,lw:52,vw:52,rh:20,click:eq=>detalhe(eq,'oc')});
 hbars('c-octop',D.oc_top,{w:230,vw:50,fmt:fh,lw:52,click:eq=>detalhe(eq,'oc')});
 const to=document.getElementById('t-oc');D.longas.forEach(r=>{const tr=to.insertRow();[r.frota,f0(r.p10),f0(r.p30),fh(r.h10)].forEach(t=>{tr.insertCell().textContent=t})});
-meta_bars('c-op',D.oc_op.map(r=>({l:nomeCurto(r.l)+maqTxt(r),v:r.v,t:`${r.l}: ${fh(r.oc)} h ociosas de ${fh(r.lig)} h ligado · máquinas: ${maqTip(r)}`,onclick:(r.maq||[]).length>1?()=>maquinas(r):null})),{w:600,lw:240,vw:52,rh:24,fs:12});
+meta_bars('c-op',D.oc_op.map(r=>({l:nomeCurto(r.l)+maqTxt(r),v:r.v,t:`${r.l}: ${fh(r.oc)} h ociosas de ${fh(r.lig)} h ligado · máquinas: ${maqTip(r)}`,onclick:D.op_maq?()=>maquinas(r.l):null,dica:'clique para ver os transbordos, o motor ocioso e o RPM'})),{w:600,lw:240,vw:52,rh:24,fs:12});
 linha('c-ocdia',D.oc_dia,D.meta_oc,{w:380,h:120,fmt:v=>NF(0)(v*100)+'%',lo:0,hi:1.25,area:true});
 
 /* L/t e litros */
+if(A){document.querySelectorAll('.leg-ant').forEach(e=>e.hidden=false);document.querySelectorAll('.per-ant').forEach(e=>e.textContent=A.periodo);
+ const ant=k=>l=>(A.frentes.find(f=>f.l===l)||{})[k];
+ vpar('c-lh',D.frentes.map(r=>({l:r.l,a:ant('lh')(r.l),v:r.lh,m:r.meta})),{color:(v,r)=>v<=r.m?'#2e7d32':'#d64550'});
+ vpar('c-lt',D.frentes.map(r=>({l:r.l,a:ant('lt')(r.l),v:r.lt})),{color:()=>'#22378c'});
+}else{
 vbars('c-lh',D.frentes.map(r=>({l:r.l+'\nmeta '+f2(r.meta),v:r.lh,m:r.meta})),{w:600,h:160,fmt:f2,bw:60,bot:42,scale:.92,color:r=>r.v<=r.m?'#2e7d32':'#d64550'});
-vbars('c-lt',D.frentes.map(r=>({l:r.l,v:r.lt})),{w:600,h:150,fmt:f2,bw:60,bot:28,scale:.92});
+vbars('c-lt',D.frentes.map(r=>({l:r.l,v:r.lt})),{w:600,h:150,fmt:f2,bw:60,bot:28,scale:.92});}
+/* ocioso e RPM: linha com a semana anterior */
+const cmp=(id,html)=>{const e=document.getElementById(id);e.innerHTML=html;e.hidden=false};
+const seta=(a,b)=>{const d=(b-a)*100;return Math.abs(d)<.05?'(igual)':`<span class="${d<0?'dn':'up'}">${d<0?'▼ −':'▲ +'}${f1(Math.abs(d))} p.p.</span>`};
+if(A&&A.pct_oc!=null)cmp('cmp-oc',`Total: <b>${pc(K.pct_oc,1)}</b> · ${A.periodo}: ${pc(A.pct_oc,1)} ${seta(A.pct_oc,K.pct_oc)}`);
+if(A&&A.rpm_exc!=null){const ex=D.rpm.slice(EXI).reduce((a,r)=>a+r.v,0);const pf=(D.rpm_frente||[]).map(f=>A.rpm_frente[f.l]==null?'':`${f.l.replace('Frente ','F')} ${pc(fxr(f),0)} ${seta(A.rpm_frente[f.l],fxr(f))}`).filter(Boolean).join(' · ');
+ cmp('cmp-rpm',`Acima de 1.650: <b>${pc(ex,1)}</b> · ${A.periodo}: ${pc(A.rpm_exc,1)} ${seta(A.rpm_exc,ex)}<br>${pf}`)}
 
 
 /* RPM */
@@ -337,12 +419,19 @@ hbars('c-rpm',D.rpm,{w:400,vw:62,lw:112,rh:29,fmt:v=>pc(v),bold:true,color:(r,i)
 /* RPM por frente (barras empilhadas) e top 10 em excesso */
 (()=>{const cores=RPMC,nomes=RPMN;
  const box=document.getElementById('c-rpmfr');const W=400,rh=34,lw=62,H=D.rpm_frente.length*rh+4;const s=svg(box,W,H);const bw=W-lw-8;
- D.rpm_frente.forEach((r,i)=>{const y=i*rh+4;let x=lw;el('text',{x:lw-8,y:y+rh/2+2,'text-anchor':'end','font-size':12},s,r.l);
+ const FO=D.rpm_frente_op||{};
+ D.rpm_frente.forEach((r,i)=>{const y=i*rh+4;let x=lw;const temOp=(FO[r.l]||[]).length>0;el('text',{x:lw-8,y:y+rh/2+2,'text-anchor':'end','font-size':12,...(temOp?{style:'fill:#2a44a8;text-decoration:underline'}:{})},s,r.l);
   for(let k=0;k<RPMN.length;k++){const v=r['b'+k],w=bw*v;const rc=el('rect',{x,y,width:w,height:rh-10,fill:cores[k]},s);hover(rc,box,`${r.l} · ${nomes[k]}: ${pc(v,1)}`);
-   if(w>30)el('text',{x:x+w/2,y:y+(rh-10)/2+4,'text-anchor':'middle','font-size':11,'font-weight':700,style:'fill:'+(k>=2&&k<RPMN.length-1?'#1d2433':'#fff')},s,NF(0)(v*100)+'%');x+=w}});
+   if(w>30)el('text',{x:x+w/2,y:y+(rh-10)/2+4,'text-anchor':'middle','font-size':11,'font-weight':700,style:'fill:'+(k>=2&&k<RPMN.length-1?'#1d2433':'#fff')},s,NF(0)(v*100)+'%');x+=w}
+  if(temOp){const a=el('rect',{x:0,y:y-2,width:W,height:rh-6,fill:'transparent',style:'cursor:pointer'},s);a.addEventListener('click',()=>frenteRpm(r));const T=tip(box);a.addEventListener('mousemove',e=>T(e,`${r.l} · clique para ver os operadores`));a.addEventListener('mouseleave',()=>T());}});
+ (()=>{const FO2=D.rpm_frente_op||{};const box2=document.getElementById('fr-ops');const n=RPMN.length;
+  if(!Object.keys(FO2).length){box2.closest('.cb').querySelectorAll('#fr-ops, #fr-ops + .note').forEach(e=>e.hidden=true);box2.previousElementSibling.hidden=true;return}
+  box2.innerHTML='<table class="frops">'+D.rpm_frente.map((r,i)=>{const top=(FO2[r.l]||[]).map(o=>({o,p:o.lig?bsum(o.b)/o.lig:0})).filter(z=>z.p>0&&z.o.op!=='Sem Operador').slice(0,3);
+   return `<tr><td><a href="#" class="lk" data-fr="${i}">${r.l}</a></td><td>${top.length?top.map(z=>`<span class="op" title="${z.o.op} · ${z.o.maq.join(', ')} · ${fh(bsum(z.o.b))} h acima de 1.650">${opLink(z.o.op,nomeCurto(z.o.op))} <b>${NF(0)(z.p*100)}%</b></span>`).join(' · '):'Ninguém acima de 1.650 RPM'}</td></tr>`}).join('')+'</table>';
+  box2.addEventListener('click',e=>{const o=e.target.closest('[data-op]');if(o){e.preventDefault();maquinas(decodeURIComponent(o.dataset.op));return}const a=e.target.closest('[data-fr]');if(!a)return;e.preventDefault();frenteRpm(D.rpm_frente[+a.dataset.fr])});})();
  document.getElementById('leg-rpm').innerHTML=nomes.map((n,k)=>`<span><i style="background:${cores[k]}"></i>${n}</span>`).join('');
  document.getElementById('leg-rpm').style.flexWrap='wrap';
- hbars('c-rpmop',(D.rpm_op||[]).map(r=>({l:nomeCurto(r.l)+maqTxt(r),v:r.v,onclick:(r.maq||[]).length>1?()=>maquinas(r):null})),{w:400,vw:56,lw:190,rh:24,fmt:v=>pc(v,1),bold:true,fs:11,color:()=>'#d64550'});
+ hbars('c-rpmop',(D.rpm_op||[]).map(r=>({l:nomeCurto(r.l)+maqTxt(r),v:r.v,onclick:D.op_maq?()=>maquinas(r.l):null,dica:'clique para ver os transbordos, o motor ocioso e o RPM'})),{w:400,vw:56,lw:190,rh:24,fmt:v=>pc(v,1),bold:true,fs:11,color:()=>'#d64550'});
  hbars('c-rpmtop',D.rpm_top.map(r=>({l:r.l,v:r.v,h:r.h})),{w:400,vw:62,lw:56,rh:22,fmt:v=>pc(v,1),bold:true,color:()=>'#d64550',click:eq=>detalhe(eq,'rpm')});
 })();
 /* frotas sem Solinftec */
@@ -351,8 +440,8 @@ if((D.sem_monit||[]).length){document.getElementById('card-sem').hidden=false;do
 /* motivos e turno */
 hbars('c-motivo',D.motivo.map(r=>({onclick:r.l==='Outros'&&(D.outros||[]).length?outros:null,dica:'clique para ver os motivos',l:r.l.replace('Abastecimento De Combustivel - Campo','Abastecimento Campo').replace('Aguardando Manobra Transbordo','Aguard. Manobra Transb.').replace('Manutencao','Manutenção'),v:r.v})),{w:400,vw:52,lw:178,fmt:fh,bold:true,fs:11,color:r=>r.l==='Aguardando Transbordo'||r.l==='Sem Apontamento'?'#d64550':'#22378c'});
 rosca('c-turno',D.oc_turno);
-if(!(D.outros||[]).length)document.getElementById('nota-outros').hidden=true;
 
+if(!(D.outros||[]).length)document.getElementById('nota-outros').hidden=true;
 (D.notas||[]).forEach(t=>{const li=document.createElement('li');li.textContent=t;document.getElementById('notas').appendChild(li)});
 </script>
 

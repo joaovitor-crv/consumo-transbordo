@@ -21,6 +21,8 @@ Painel de consumo dos transbordos: L/h por modelo (meta do indicador), L/t, moto
 ```
 python gerar/gerar_relatorio.py --pdf INDICADOR_TRANSBORDOS.pdf --monit MONIT.csv --frentes 1,2,3,5,6
 ```
+Cada execução salva a semana em `semana-AAAA-MM-DD_AAAA-MM-DD.html` (seletor "Semana" no topo) e compara com a semana anterior já gerada.
+
 Precisa de Python 3 e `pdftotext` (poppler-utils). Visual em `gerar/modelo.html` (dados em `__DADOS__`).
 
 Desenvolvido por João Vitor - CRV
