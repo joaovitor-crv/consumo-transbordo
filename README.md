@@ -2,7 +2,7 @@
 
 Painel de consumo dos transbordos: L/h por modelo (meta do indicador), L/t, motor ocioso, paradas longas, faixa de RPM, excesso de RPM e operadores.
 
-**Período atual:** 19/10/2026 a 25/10/2026 (frentes 1, 2, 3, 5 e 6)
+**Período atual:** 26/10/2026 a 01/11/2026 (frentes 1, 2, 3, 5 e 6)
 
 ## Bases
 - **Indicador Consumo de Combustível — Tratores Transbordo (PDF)**: coluna SEMANA (horas, diesel, L/h, meta por modelo, toneladas, L/t).
