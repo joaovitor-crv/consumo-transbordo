@@ -1,6 +1,12 @@
 // Gerado por gerar/gerar_relatorio.py: semanas disponíveis no seletor do topo (mais recente primeiro).
 window.SEMANAS = [
  {
+  "arq": "semana-2026-11-02_2026-11-08.html",
+  "ini": "2026-11-02",
+  "fim": "2026-11-08",
+  "rotulo": "02/11/2026 a 08/11/2026"
+ },
+ {
   "arq": "semana-2026-10-26_2026-11-01.html",
   "ini": "2026-10-26",
   "fim": "2026-11-01",
